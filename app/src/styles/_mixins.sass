@@ -1,0 +1,37 @@
+// mixins
+@mixin border-radius($radius)
+  -webkit-border-radius: $radius
+  -moz-border-radius: $radius
+  -ms-border-radius: $radius
+  border-radius: $radius
+
+@mixin flex
+  display: -webkit-box
+  display: -moz-box
+  display: -ms-flexbox
+  display: -webkit-flex
+  display: flex
+
+@mixin flex-flow-row
+  -webkit-flex-flow: row wrap
+  flex-flow: row wrap
+
+
+@mixin flex-flow-row-nowrap
+  -webkit-flex-flow: row
+  flex-flow: row
+
+@mixin flex-flow-column
+  -webkit-flex-flow: column wrap
+  flex-flow: column wrap
+
+@mixin transition($transition)
+  -webkit-transition: $transition
+  -moz-transition: $transition
+  -o-transition: $transition
+  transition: $transition
+
+@mixin border-box
+  -webkit-box-sizing: border-box
+  -moz-box-sizing: border-box
+  box-sizing: border-box

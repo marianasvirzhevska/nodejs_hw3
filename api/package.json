@@ -1,0 +1,38 @@
+{
+  "name": "nodejs_hw3_api",
+  "version": "1.0.0",
+  "description": "Server side app",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "prod": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marianasvirzhevska/nodejs_hw3.git"
+  },
+  "keywords": [
+    "Nodejs",
+    "JWT",
+    "Express",
+    "MongoBD"
+  ],
+  "author": "Mariana Svirzhevska",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marianasvirzhevska/nodejs_hw3/issues"
+  },
+  "homepage": "https://github.com/marianasvirzhevska/nodejs_hw3#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-google": "^0.14.0",
+    "nodemon": "^2.0.2"
+  },
+  "extends": "google",
+  "rules": {},
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "body-parser": "^1.19.0",
+    "config": "^3.3.0"
+  }
+}
