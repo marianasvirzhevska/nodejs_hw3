@@ -27,4 +27,4 @@ npm-debug.log
 .env.production.local
 
 # local config
-local.json
+local.js

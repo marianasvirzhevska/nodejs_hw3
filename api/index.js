@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const config = require('config');
 const mongoose = require('mongoose');
 
-const log = require('./src/middleware/log');
 
 const { port: serverPort } = config.get('serverConfig');
 const { port, name, protocol, host } = config.get('dbConfig');
@@ -14,9 +13,11 @@ mongoose.connect(bdUrl, {
     useUnifiedTopology: true,
 })
     .then(() => console.log('MongoBD connected'))
-    .catch((err) => console.log('Error. MongoBD not connected.', err));
+    .catch((err) => console.error('Error. MongoBD not connected.', err));
 
 const app = express();
+
+const log = require('./src/middleware/log');
 
 const Schema = mongoose.Schema;
 const schema = new Schema({
@@ -31,12 +32,10 @@ const schema = new Schema({
 const User = mongoose.model('User', schema);
 User.createCollection();
 
-app.get('/ttt', (req, res) => {
-    // User.find({}).then((user) => res.json(user));
+app.get('/test', (req, res) => {
     res.status(200).json({ status: 'ok' });
     res.end();
 });
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
