@@ -4,8 +4,9 @@
   "description": "Server side app",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "prod": "node index.js"
+    "server": "nodemon index.js",
+    "prod": "node index.js",
+    "dev": "concurrently --kill-others-on-fail \"yarn server\""
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,9 @@
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "body-parser": "^1.19.0",
-    "config": "^3.3.0"
+    "concurrently": "^5.1.0",
+    "config": "^3.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.6"
   }
 }

@@ -1,6 +1,6 @@
 {
-  "short_name": "TM",
-  "name": "Task Manager Tools",
+  "short_name": "nodejs_hw3_client",
+  "name": "Loads Trucking App",
   "icons": [
     {
       "src": "favicon.ico",

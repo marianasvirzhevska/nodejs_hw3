@@ -1,3 +1,23 @@
 {
-  "extends": "google"
+  "extends": "eslint-config-google",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "no-unused-vars": 0,
+    "indent": [
+      "error",
+      4,
+      { "flatTernaryExpressions": false }
+    ],
+    "multiline-ternary": ["error", "always"],
+    "require-jsdoc": 0,
+    "max-len": ["error", 140],
+    "operator-linebreak": ["error", "before"],
+    "object-curly-spacing": ["error", "always"]
+  }
 }
