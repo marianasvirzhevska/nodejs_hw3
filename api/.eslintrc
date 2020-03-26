@@ -18,6 +18,7 @@
     "require-jsdoc": 0,
     "max-len": ["error", 140],
     "operator-linebreak": ["error", "before"],
-    "object-curly-spacing": ["error", "always"]
+    "object-curly-spacing": ["error", "always"],
+    "linebreak-style": ["error", "unix"]
   }
 }
