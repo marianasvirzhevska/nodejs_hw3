@@ -50,7 +50,7 @@ router.post('/register', (req, res) => {
 
     UserModel.find({ email })
         .then((user) => {
-            if (user) {
+            if (user.length) {
                 res.status(400).json({ status: 'Email address already in use' });
                 res.end();
                 return;
@@ -61,7 +61,16 @@ router.post('/register', (req, res) => {
                     res.status(400).json({ status: 'Error occurred. Try again later' });
                     throw err;
                 } else {
-                    res.json({ status: 'User successfully created', user: userModel });
+                    const user = {
+                        firstName: userModel.firstName,
+                        lastName: userModel.lastName,
+                        role: userModel.role,
+                        email: userModel.email,
+                    };
+
+                    const userToken = jwt.sign(user, secret);
+
+                    res.json({ status: 'User successfully created', user: userToken });
                 }
                 res.end();
             });
