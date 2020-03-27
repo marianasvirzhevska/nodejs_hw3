@@ -1,6 +1,7 @@
 const express = require('express');
 const config = require('config');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const router = express.Router();
 const secret = config.get('secret');
 const { UserModel } = require('../modules/userModule');
@@ -16,23 +17,25 @@ router.post('/login', (req, res) => {
                 return;
             };
 
-            if (user.password !== password) {
-                res.status(400).json({ status: 'Wrong password.' });
-                res.end();
-                return;
-            } else {
-                const authUser = {
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    role: user.role,
-                    email: user.email,
-                };
+            bcrypt.compare(password, user.password)
+                .then((isValid) => {
+                    if (isValid) {
+                        const authUser = {
+                            firstName: user.firstName,
+                            lastName: user.lastName,
+                            role: user.role,
+                            email: user.email,
+                        };
 
-                const userToken = jwt.sign(authUser, secret);
+                        const userToken = jwt.sign(authUser, secret);
 
-                res.json({ status: 'User successfully logged in.', user: userToken });
-                res.end();
-            }
+                        res.json({ status: 'User successfully logged in.', user: userToken });
+                        res.end();
+                    } else {
+                        res.status(400).json({ status: 'Wrong password.' });
+                        res.end();
+                    }
+                });
         })
         .catch((err) => console.error('Error: ', err));
 });

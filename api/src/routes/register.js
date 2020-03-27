@@ -1,6 +1,7 @@
 const express = require('express');
 const config = require('config');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const router = express.Router();
 const secret = config.get('secret');
 const {
@@ -20,7 +21,7 @@ router.post('/register', (req, res) => {
     }
 
     const dbUser = new UserModel(value);
-    const { email } = dbUser;
+    const { email, password } = dbUser;
 
     UserModel.find({ email })
         .then((user) => {
@@ -29,24 +30,33 @@ router.post('/register', (req, res) => {
                 res.end();
                 return;
             }
+            bcrypt.hash(password, 10, (err, hash) => {
+                dbUser.password = dbUser.password_repeat = hash;
 
-            dbUser.save((err) => {
                 if (err) {
-                    res.status(400).json({ status: 'Error occurred. Try again later' });
+                    res.status(500).json({ status: 'Error occurred. Try again later' });
+                    res.end();
                     throw err;
-                } else {
-                    const user = {
-                        firstName: dbUser.firstName,
-                        lastName: dbUser.lastName,
-                        role: dbUser.role,
-                        email: dbUser.email,
-                    };
-
-                    const userToken = jwt.sign(user, secret);
-
-                    res.json({ status: 'User successfully created', user: userToken });
                 }
-                res.end();
+
+                dbUser.save((err) => {
+                    if (err) {
+                        res.status(400).json({ status: 'Error occurred. Try again later' });
+                        throw err;
+                    } else {
+                        const user = {
+                            firstName: dbUser.firstName,
+                            lastName: dbUser.lastName,
+                            role: dbUser.role,
+                            email: dbUser.email,
+                        };
+
+                        const userToken = jwt.sign(user, secret);
+
+                        res.json({ status: 'User successfully created', user: userToken });
+                    }
+                    res.end();
+                });
             });
         });
 });
