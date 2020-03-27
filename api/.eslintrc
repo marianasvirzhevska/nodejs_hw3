@@ -19,6 +19,7 @@
     "max-len": ["error", 140],
     "operator-linebreak": ["error", "before"],
     "object-curly-spacing": ["error", "always"],
-    "linebreak-style": ["error", "unix"]
+    "linebreak-style": ["error", "unix"],
+    "array-bracket-spacing": ["error", "always"]
   }
 }
