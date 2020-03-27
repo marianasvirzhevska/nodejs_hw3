@@ -10,4 +10,5 @@ module.exports = {
         protokol: 'SERVER_PROTOCOL',
         host: 'SERVER_HOST',
     },
+    secret: 'SECRET',
 };

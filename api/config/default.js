@@ -10,4 +10,5 @@ module.exports = {
         protokol: 'http',
         host: '127.0.0.1',
     },
+    secret: 'somesecret',
 };
