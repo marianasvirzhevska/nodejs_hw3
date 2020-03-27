@@ -10,7 +10,7 @@ const userSchema = mongoose.Schema({
     firstName: String,
     lastName: String,
     email: String,
-    phone: Number,
+    phone: String,
     birthday: Date,
     created: {
         type: Date,
@@ -30,7 +30,7 @@ const userValidateSchema = Joi.object({
     phone: Joi.string().max(12).required(),
     created: Joi.date().max('1-1-2050').iso(),
     role: Joi.string().required(),
-    password: Joi.string().regex(/[a-zA-Z0-9]{6,10}/).required(),
+    password: Joi.string().pattern(/^[a-zA-Z0-9]{6,10}$/).required(),
     password_repeat: Joi.ref('password'),
 });
 
@@ -45,8 +45,8 @@ router.post('/register', (req, res) => {
         return;
     }
 
-    const userModel = new UserModel(value);
-    const { email } = userModel;
+    const dbUser = new UserModel(value);
+    const { email } = dbUser;
 
     UserModel.find({ email })
         .then((user) => {
@@ -56,16 +56,16 @@ router.post('/register', (req, res) => {
                 return;
             }
 
-            userModel.save((err) => {
+            dbUser.save((err) => {
                 if (err) {
                     res.status(400).json({ status: 'Error occurred. Try again later' });
                     throw err;
                 } else {
                     const user = {
-                        firstName: userModel.firstName,
-                        lastName: userModel.lastName,
-                        role: userModel.role,
-                        email: userModel.email,
+                        firstName: dbUser.firstName,
+                        lastName: dbUser.lastName,
+                        role: dbUser.role,
+                        email: dbUser.email,
                     };
 
                     const userToken = jwt.sign(user, secret);
