@@ -1,7 +1,7 @@
 const express = require('express');
 const config = require('config');
 const router = express.Router();
-const { UserModel } = require('../modules/userModule');
+const { UserModel, userUpdateSchema } = require('../models/userModel');
 const objectID = require('mongodb').ObjectID;
 
 router.get('/profile', (req, res) => {
@@ -44,18 +44,24 @@ router.put('/profile', (req, res) => {
     } else {
         const update = req.body;
         const { id } = user;
+        const { value, error } = userUpdateSchema.validate(update);
 
-        UserModel.updateOne({ _id: objectID(id) }, { $set: update })
-            .then((raw) => {
-                res.json({ status: 'User profile updated' });
-                res.end();
-            })
-            .catch((err) => {
-                console.error(err);
-
-                res.status(500).json({ status: 'Error. Try again later.' });
-                res.end();
-            });
+        if (error) {
+            console.error(err);
+            res.status(500).json({ status: 'Error. Try again later.' });
+            res.end();
+        } else {
+            UserModel.updateOne({ _id: objectID(id) }, { $set: value })
+                .then((raw) => {
+                    res.json({ status: 'User profile edited.' });
+                    res.end();
+                })
+                .catch((err) => {
+                    console.error(err);
+                    res.status(500).json({ status: 'Error. Try again later.' });
+                    res.end();
+                });
+        }
     }
 });
 

@@ -7,7 +7,7 @@ const secret = config.get('secret');
 const {
     UserModel,
     userValidateSchema,
-} = require('../modules/userModule');
+} = require('../models/userModel');
 
 router.post('/register', (req, res) => {
     const user = req.body;
