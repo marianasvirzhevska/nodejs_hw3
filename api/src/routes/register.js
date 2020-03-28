@@ -1,38 +1,13 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const config = require('config');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const router = express.Router();
 const secret = config.get('secret');
-const Joi = require('@hapi/joi');
-
-const userSchema = mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    email: String,
-    phone: String,
-    birthday: Date,
-    created: {
-        type: Date,
-        default: Date.now(),
-    },
-    role: String,
-    password: String,
-    password_repeat: String,
-});
-
-const UserModel = mongoose.model('User', userSchema);
-
-const userValidateSchema = Joi.object({
-    firstName: Joi.string().min(3).max(30).required(),
-    lastName: Joi.string().min(3).max(30).required(),
-    email: Joi.string().email().required(),
-    phone: Joi.string().max(12).required(),
-    created: Joi.date().max('1-1-2050').iso(),
-    role: Joi.string().required(),
-    password: Joi.string().pattern(/^[a-zA-Z0-9]{6,10}$/).required(),
-    password_repeat: Joi.ref('password'),
-});
+const {
+    UserModel,
+    userValidateSchema,
+} = require('../modules/userModule');
 
 router.post('/register', (req, res) => {
     const user = req.body;
@@ -46,7 +21,7 @@ router.post('/register', (req, res) => {
     }
 
     const dbUser = new UserModel(value);
-    const { email } = dbUser;
+    const { email, password } = dbUser;
 
     UserModel.find({ email })
         .then((user) => {
@@ -55,24 +30,33 @@ router.post('/register', (req, res) => {
                 res.end();
                 return;
             }
+            bcrypt.hash(password, 10, (err, hash) => {
+                dbUser.password = dbUser.password_repeat = hash;
 
-            dbUser.save((err) => {
                 if (err) {
-                    res.status(400).json({ status: 'Error occurred. Try again later' });
+                    res.status(500).json({ status: 'Error occurred. Try again later' });
+                    res.end();
                     throw err;
-                } else {
-                    const user = {
-                        firstName: dbUser.firstName,
-                        lastName: dbUser.lastName,
-                        role: dbUser.role,
-                        email: dbUser.email,
-                    };
-
-                    const userToken = jwt.sign(user, secret);
-
-                    res.json({ status: 'User successfully created', user: userToken });
                 }
-                res.end();
+
+                dbUser.save((err) => {
+                    if (err) {
+                        res.status(400).json({ status: 'Error occurred. Try again later' });
+                        throw err;
+                    } else {
+                        const user = {
+                            firstName: dbUser.firstName,
+                            lastName: dbUser.lastName,
+                            role: dbUser.role,
+                            email: dbUser.email,
+                        };
+
+                        const userToken = jwt.sign(user, secret);
+
+                        res.json({ status: 'User successfully created', user: userToken });
+                    }
+                    res.end();
+                });
             });
         });
 });

@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const config = require('config');
 const mongoose = require('mongoose');
 const registerRoute = require('./src/routes/register');
+const loginRoute = require('./src/routes/login');
 
 const { port: serverPort } = config.get('serverConfig');
 const { port, name, protocol, host } = config.get('dbConfig');
@@ -26,5 +27,6 @@ app.use(express.json());
 app.use(log);
 
 app.use(registerRoute);
+app.use(loginRoute);
 
 app.listen(serverPort, () => console.log(`Server is running on port: ${serverPort}`));
