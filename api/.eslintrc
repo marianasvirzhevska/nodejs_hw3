@@ -20,6 +20,7 @@
     "operator-linebreak": ["error", "before"],
     "object-curly-spacing": ["error", "always"],
     "linebreak-style": ["error", "unix"],
-    "array-bracket-spacing": ["error", "always"]
+    "array-bracket-spacing": ["error", "always"],
+    "new-cap": [2, {"capIsNewExceptions": ["Router", "express.Router", "mongoose.Schema", "Schema"]}]
   }
 }
