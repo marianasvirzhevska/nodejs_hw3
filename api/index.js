@@ -14,8 +14,8 @@ mongoose.connect(bdUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-    .then(() => console.log('MongoBD connected'))
-    .catch((err) => console.error('Error. MongoBD not connected.', err));
+    .then(() => console.log('MongoDB connected'))
+    .catch((err) => console.error('Error. MongoDB not connected.', err));
 
 const app = express();
 
