@@ -24,7 +24,7 @@ router.post('/login', (req, res) => {
                             firstName: user.firstName,
                             lastName: user.lastName,
                             role: user.role,
-                            email: user.email,
+                            id: user._id,
                         };
 
                         const userToken = jwt.sign(authUser, secret);

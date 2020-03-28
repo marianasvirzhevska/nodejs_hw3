@@ -2,6 +2,7 @@ const express = require('express');
 const config = require('config');
 const router = express.Router();
 const { UserModel } = require('../modules/userModule');
+const objectID = require('mongodb').ObjectID;
 
 router.get('/profile', (req, res) => {
     const user = req.user;
@@ -10,27 +11,27 @@ router.get('/profile', (req, res) => {
         res.status(401).json({ status: 'Invalid user token.' });
         res.end();
     } else {
-        const { email } = user;
+        const { id } = user;
 
-        UserModel.find({ email })
-            .then(([ user ]) => {
-                const userInfo = {
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    role: user.role,
-                    email: user.email,
-                    phone: user.phone,
-                };
+        UserModel.findById(id, (err, dbUser) => {
+            if (err) {
+                console.error(err);
 
-                res.json({ userInfo });
+                res.status(500).json({ status: 'User info not found.' });
                 res.end();
-            })
-            .catch((err) => {
-                console.error('Error: ', err);
+            }
 
-                res.status(500).json({ status: 'User info not found' });
-                res.end();
-            });
+            const userInfo = {
+                firstName: dbUser.firstName,
+                lastName: dbUser.lastName,
+                role: dbUser.role,
+                email: dbUser.email,
+                phone: dbUser.phone,
+            };
+
+            res.json({ status: 'Ok', userInfo });
+            res.end();
+        });
     }
 });
 
@@ -41,16 +42,20 @@ router.put('/profile', (req, res) => {
         res.status(401).json({ status: 'Invalid user token.' });
         res.end();
     } else {
-        const phoneNew = req.body.phone;
-        const { email: oldEmail, phone: oldPhone } = user;
-        console.log('1', phoneNew);
-        UserModel.updateOne({ email: oldEmail }, { $set: { phone: phoneNew } }, (err, aff, res) => {
-            console.log(aff, res);
-            return (aff, res);
-        });
+        const update = req.body;
+        const { id } = user;
 
-        res.json({ status: 'User updated' });
-        res.end();
+        UserModel.updateOne({ _id: objectID(id) }, { $set: update })
+            .then((raw) => {
+                res.json({ status: 'User profile updated' });
+                res.end();
+            })
+            .catch((err) => {
+                console.error(err);
+
+                res.status(500).json({ status: 'Error. Try again later.' });
+                res.end();
+            });
     }
 });
 
