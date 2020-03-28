@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const registerRoute = require('./src/routes/register');
 const loginRoute = require('./src/routes/login');
 const profileRoute = require('./src/routes/profile');
+const changePassRoute = require('./src/routes/changePassword');
 
 const { port: serverPort } = config.get('serverConfig');
 const { port, name, protocol, host } = config.get('dbConfig');
@@ -34,5 +35,6 @@ app.use(loginRoute);
 app.use(auth);
 
 app.use(profileRoute);
+app.use(changePassRoute);
 
 app.listen(serverPort, () => console.log(`Server is running on port: ${serverPort}`));

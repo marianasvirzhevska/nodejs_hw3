@@ -13,6 +13,7 @@ const userSchema = mongoose.Schema({
     },
     role: String,
     password: String,
+    password_repeat: String,
 });
 
 const UserModel = mongoose.model('User', userSchema);
@@ -33,6 +34,7 @@ const userValidateSchema = Joi.object({
     created: created,
     role: role.required(),
     password: password.required(),
+    pasword_repeat: Joi.ref('password'),
 });
 
 const userUpdateSchema = Joi.object({
@@ -41,8 +43,14 @@ const userUpdateSchema = Joi.object({
     phone: Joi.string().max(12),
 });
 
+const userPassSchema = Joi.object({
+    password: password.required(),
+    password_repeat: Joi.ref('password'),
+});
+
 module.exports = {
     UserModel,
     userUpdateSchema,
     userValidateSchema,
+    userPassSchema,
 };

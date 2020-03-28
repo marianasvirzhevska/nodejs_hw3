@@ -1,5 +1,4 @@
 const express = require('express');
-const config = require('config');
 const router = express.Router();
 const { UserModel, userUpdateSchema } = require('../models/userModel');
 const objectID = require('mongodb').ObjectID;
