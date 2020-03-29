@@ -46,7 +46,7 @@ router.put('/profile', (req, res) => {
         const { value, error } = userUpdateSchema.validate(update);
 
         if (error) {
-            console.error(err);
+            console.error(error);
             res.status(500).json({ status: 'Error. Try again later.' });
             res.end();
         } else {
