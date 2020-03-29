@@ -69,8 +69,6 @@ router.get('/truck', (req, res) => {
 });
 
 router.put('/truck', (req, res) => {
-    const user = req.user;
-
     if (!req.user) {
         res.status(401).json({ status: 'Invalid user token.' });
         res.end();
@@ -85,10 +83,54 @@ router.put('/truck', (req, res) => {
             return;
         }
 
-        TruckModel.updateOne({ _id: objectID(truck._id) }, { $set: value })
-            .then((raw) => {
-                res.json({ status: 'Truck profile edited.' });
+        TruckModel.findById(truck._id, (err, dbTruck) => {
+            if (err) {
+                console.error(err);
+
+                res.status(500).json({ status: 'Truck not found.' });
                 res.end();
+                return;
+            }
+
+            if (dbTruck.assigned_to) {
+                res.status(500).json({ status: 'Truck editing not permitted.' });
+                res.end();
+            } else {
+                TruckModel.updateOne({ _id: objectID(truck._id) }, { $set: truck })
+                    .then((raw) => {
+                        res.json({ status: 'Truck profile edited.' });
+                        res.end();
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        res.status(500).json({ status: 'Error. Try again later.' });
+                        res.end();
+                    });
+            }
+        });
+    }
+});
+
+router.put('/assign', (req, res) => {
+    const { _id } = req.body;
+    const user = req.user;
+
+    if (!user) {
+        res.status(401).json({ status: 'Invalid user token.' });
+        res.end();
+    } else {
+        TruckModel.updateOne({ _id: objectID(_id) }, { $set: { assigned_to: user.id } })
+            .then((raw) => {
+                TruckModel.updateMany(
+                    {
+                        _id: { $ne: objectID(_id) },
+                    },
+                    { assigned_to: null },
+                )
+                    .then((r) => {
+                        res.json({ status: 'Truck assigned.' });
+                        res.end();
+                    });
             })
             .catch((err) => {
                 console.error(err);
