@@ -54,13 +54,13 @@ const dimensionsSchema = Joi.object({
 const loadValidateSchema = Joi.object({
     _id: Joi.string(),
     name: Joi.string(),
-    created_by: Joi.string().required(),
+    created_by: Joi.string(),
     logs: Joi.array().items(logSchema),
     assigned_to: Joi.string(),
     status: Joi.string(),
     state: Joi.string(),
     dimensions: dimensionsSchema,
-    payload: Joi.number().required(),
+    payload: Joi.number(),
 });
 
 module.exports = {
