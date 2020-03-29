@@ -4,6 +4,7 @@ const {
     TruckModel,
     truckValidateSchema,
 } = require('../models/truckModel');
+const objectID = require('mongodb').ObjectID;
 
 router.post('/truck', (req, res) => {
     const user = req.user;
@@ -52,8 +53,6 @@ router.get('/truck', (req, res) => {
         res.status(401).json({ status: 'Invalid user token.' });
         res.end();
     } else {
-        // const { id } = user;
-
         TruckModel.find({ created_by: user.id })
             .then((trucks) => {
                 if (!trucks.length) {
@@ -66,6 +65,36 @@ router.get('/truck', (req, res) => {
                 res.end();
             })
             .catch((err) => console.error(err));
+    }
+});
+
+router.put('/truck', (req, res) => {
+    const user = req.user;
+
+    if (!req.user) {
+        res.status(401).json({ status: 'Invalid user token.' });
+        res.end();
+    } else {
+        const truck = req.body;
+        const { value, error } = truckValidateSchema.validate(truck);
+
+        if (error) {
+            const errors = error.details;
+            res.json(errors);
+            res.end();
+            return;
+        }
+
+        TruckModel.updateOne({ _id: objectID(truck._id) }, { $set: value })
+            .then((raw) => {
+                res.json({ status: 'Truck profile edited.' });
+                res.end();
+            })
+            .catch((err) => {
+                console.error(err);
+                res.status(500).json({ status: 'Error. Try again later.' });
+                res.end();
+            });
     }
 });
 

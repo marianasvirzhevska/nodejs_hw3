@@ -23,6 +23,7 @@ const truckSchema = mongoose.Schema({
 const TruckModel = mongoose.model('Truck', truckSchema);
 
 const truckValidateSchema = Joi.object({
+    _id: Joi.string(),
     created_by: Joi.string().required(),
     assigned_to: Joi.string(),
     status: Joi.string(),
