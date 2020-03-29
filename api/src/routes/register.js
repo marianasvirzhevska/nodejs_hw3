@@ -26,7 +26,7 @@ router.post('/register', (req, res) => {
     UserModel.find({ email })
         .then((user) => {
             if (user.length) {
-                res.status(400).json({ status: 'Email address already in use' });
+                res.status(500).json({ status: 'Email address already in use' });
                 res.end();
                 return;
             }
@@ -41,7 +41,7 @@ router.post('/register', (req, res) => {
 
                 dbUser.save((err) => {
                     if (err) {
-                        res.status(400).json({ status: 'Error occurred. Try again later' });
+                        res.status(500).json({ status: 'Error occurred. Try again later' });
                         throw err;
                     } else {
                         const user = {

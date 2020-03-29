@@ -6,6 +6,7 @@ const registerRoute = require('./src/routes/register');
 const loginRoute = require('./src/routes/login');
 const profileRoute = require('./src/routes/profile');
 const changePassRoute = require('./src/routes/changePassword');
+const truckRoute = require('./src/routes/truck');
 
 const { port: serverPort } = config.get('serverConfig');
 const { port, name, protocol, host } = config.get('dbConfig');
@@ -36,5 +37,7 @@ app.use(auth);
 
 app.use(profileRoute);
 app.use(changePassRoute);
+
+app.use(truckRoute);
 
 app.listen(serverPort, () => console.log(`Server is running on port: ${serverPort}`));
