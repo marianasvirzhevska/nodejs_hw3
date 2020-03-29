@@ -140,4 +140,36 @@ router.put('/assign', (req, res) => {
     }
 });
 
+router.delete('/truck', (req, res) => {
+    const { _id } = req.body;
+    const user = req.user;
+
+    if (!user) {
+        res.status(401).json({ status: 'Invalid user token.' });
+        res.end();
+    } else {
+        TruckModel.findById(_id, (err, dbTruck) => {
+            if (err) {
+                console.error(err);
+
+                res.status(500).json({ status: 'Truck not found.' });
+                res.end();
+                return;
+            }
+
+            if (dbTruck.assigned_to) {
+                res.status(500).json({ status: 'Deleting forbiden.' });
+                res.end();
+            } else {
+                TruckModel.deleteOne({ _id: objectID(_id) })
+                    .then((r) => {
+                        console.log(r);
+                        res.json({ status: 'Truck deleted.' });
+                        res.end();
+                    });
+            }
+        });
+    }
+});
+
 module.exports = router;
