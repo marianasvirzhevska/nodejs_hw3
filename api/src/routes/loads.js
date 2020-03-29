@@ -115,4 +115,59 @@ router.put('/loads', (req, res) => {
     }
 });
 
+router.delete('/loads', (req, res) => {
+    const { _id } = req.body;
+    const user = req.user;
+
+    if (!user) {
+        res.status(401).json({ status: 'Invalid user token.' });
+        res.end();
+    } else {
+        LoadModel.findById(_id, (err, dbLoad) => {
+            if (err) {
+                console.error(err);
+
+                res.status(500).json({ status: 'Load not found.' });
+                res.end();
+                return;
+            }
+
+            if (dbLoad.status !== LOAD_STATUS.NEW) {
+                res.status(500).json({ status: 'Deleting forbiden.' });
+                res.end();
+            } else {
+                LoadModel.deleteOne({ _id: objectID(_id) })
+                    .then(() => {
+                        res.json({ status: 'Load deleted.' });
+                        res.end();
+                    });
+            }
+        });
+    }
+});
+
+router.put('/post-load', (req, res) => {
+    const { _id } = req.body;
+    const user = req.user;
+    const query = {
+        status: LOAD_STATUS.POSTED,
+    };
+
+    if (!user) {
+        res.status(401).json({ status: 'Invalid user token.' });
+        res.end();
+    } else {
+        LoadModel.updateOne({ _id: objectID(_id) }, { $set: query })
+            .then((raw) => {
+                res.json({ status: 'Load posted.' });
+                res.end();
+            })
+            .catch((err) => {
+                console.error(err);
+                res.status(500).json({ status: 'Error. Try again later.' });
+                res.end();
+            });
+    }
+});
+
 module.exports = router;

@@ -153,8 +153,7 @@ router.delete('/truck', (req, res) => {
                 res.end();
             } else {
                 TruckModel.deleteOne({ _id: objectID(_id) })
-                    .then((r) => {
-                        console.log(r);
+                    .then(() => {
                         res.json({ status: 'Truck deleted.' });
                         res.end();
                     });
