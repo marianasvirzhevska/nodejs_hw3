@@ -45,4 +45,28 @@ router.post('/truck', (req, res) => {
     }
 });
 
+router.get('/truck', (req, res) => {
+    const user = req.user;
+
+    if (!req.user) {
+        res.status(401).json({ status: 'Invalid user token.' });
+        res.end();
+    } else {
+        // const { id } = user;
+
+        TruckModel.find({ created_by: user.id })
+            .then((trucks) => {
+                if (!trucks.length) {
+                    res.json({ status: 'No trucks found.' });
+                    res.end();
+                    return;
+                };
+
+                res.json({ status: 'Ok', trucks });
+                res.end();
+            })
+            .catch((err) => console.error(err));
+    }
+});
+
 module.exports = router;
