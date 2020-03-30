@@ -7,7 +7,7 @@ const secret = config.get('secret');
 const {
     UserModel,
     userValidateSchema,
-} = require('../modules/userModule');
+} = require('../models/userModel');
 
 router.post('/register', (req, res) => {
     const user = req.body;
@@ -31,7 +31,7 @@ router.post('/register', (req, res) => {
                 return;
             }
             bcrypt.hash(password, 10, (err, hash) => {
-                dbUser.password = dbUser.password_repeat = hash;
+                dbUser.password = hash;
 
                 if (err) {
                     res.status(500).json({ status: 'Error occurred. Try again later' });
@@ -48,7 +48,7 @@ router.post('/register', (req, res) => {
                             firstName: dbUser.firstName,
                             lastName: dbUser.lastName,
                             role: dbUser.role,
-                            email: dbUser.email,
+                            id: dbUser._id,
                         };
 
                         const userToken = jwt.sign(user, secret);
