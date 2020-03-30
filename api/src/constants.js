@@ -3,7 +3,7 @@ const TRUCK_STATUS = {
     ON_LOAD: 'ON_LOAD',
 };
 
-const TRUCK_TYPES = {
+const TRUCK_TYPE = {
     SPRINTER: 'SPRINTER',
     SMALL_STRAIGHT: 'SMALL_STRAIGHT',
     LARGE_STRAIGHT: 'LARGE_STRAIGHT',
@@ -25,7 +25,7 @@ const LOAD_STATE = {
 
 module.exports = {
     TRUCK_STATUS,
-    TRUCK_TYPES,
+    TRUCK_TYPE,
     LOAD_STATUS,
     LOAD_STATE,
 };

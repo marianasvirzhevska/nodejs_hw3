@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const {
     TruckModel,
+    truckValidateSchema,
+    assignTruckTo,
+    unassignUserTrucksExceptOne,
+    findTruckById,
+    updateTruck,
 } = require('../models/truckModel');
 const objectID = require('mongodb').ObjectID;
 
@@ -74,35 +79,35 @@ router.put('/truck', (req, res) => {
     } else {
         const truck = req.body;
 
-        TruckModel.findById(truck._id, (err, dbTruck) => {
-            if (err) {
+        findTruckById(truck._id)
+            .then((dbTruck) => {
+                if (dbTruck.assigned_to) {
+                    res.status(500).json({ status: 'Truck editing not permitted.' });
+                    res.end();
+                } else {
+                    updateTruck(truck._id, truck)
+                        .then((raw) => {
+                            res.json({ status: 'Truck profile edited.' });
+                            res.end();
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                            res.status(500).json({ status: 'Error. Try again later.' });
+                            res.end();
+                        });
+                }
+            })
+            .catch((err) => {
                 console.error(err);
 
                 res.status(500).json({ status: 'Truck not found.' });
                 res.end();
                 return;
-            }
-
-            if (dbTruck.assigned_to) {
-                res.status(500).json({ status: 'Truck editing not permitted.' });
-                res.end();
-            } else {
-                TruckModel.updateOne({ _id: objectID(truck._id) }, { $set: truck })
-                    .then((raw) => {
-                        res.json({ status: 'Truck profile edited.' });
-                        res.end();
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        res.status(500).json({ status: 'Error. Try again later.' });
-                        res.end();
-                    });
-            }
-        });
+            });
     }
 });
 
-router.put('/assign', (req, res) => {
+router.put('/truck/assign', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
 
@@ -110,14 +115,9 @@ router.put('/assign', (req, res) => {
         res.status(401).json({ status: 'Invalid user token.' });
         res.end();
     } else {
-        TruckModel.updateOne({ _id: objectID(_id) }, { $set: { assigned_to: user.id } })
+        assignTruckTo(_id, user.id)
             .then((raw) => {
-                TruckModel.updateMany(
-                    {
-                        _id: { $ne: objectID(_id) },
-                    },
-                    { assigned_to: null },
-                )
+                unassignUserTrucksExceptOne(_id, user.id)
                     .then((r) => {
                         res.json({ status: 'Truck assigned.' });
                         res.end();
