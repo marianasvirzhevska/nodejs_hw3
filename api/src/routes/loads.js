@@ -146,7 +146,7 @@ router.delete('/loads', (req, res) => {
     }
 });
 
-router.put('/post-load', (req, res) => {
+router.put('/loads/post', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
     const query = {
