@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const {
     TruckModel,
-    truckValidateSchema,
 } = require('../models/truckModel');
 const objectID = require('mongodb').ObjectID;
 
@@ -74,14 +73,6 @@ router.put('/truck', (req, res) => {
         res.end();
     } else {
         const truck = req.body;
-        const { value, error } = truckValidateSchema.validate(truck);
-
-        if (error) {
-            const errors = error.details;
-            res.json(errors);
-            res.end();
-            return;
-        }
 
         TruckModel.findById(truck._id, (err, dbTruck) => {
             if (err) {
@@ -162,8 +153,7 @@ router.delete('/truck', (req, res) => {
                 res.end();
             } else {
                 TruckModel.deleteOne({ _id: objectID(_id) })
-                    .then((r) => {
-                        console.log(r);
+                    .then(() => {
                         res.json({ status: 'Truck deleted.' });
                         res.end();
                     });
