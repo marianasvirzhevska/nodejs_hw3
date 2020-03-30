@@ -12,7 +12,7 @@ router.post('/login', (req, res) => {
     UserModel.find({ email })
         .then(([ user ]) => {
             if (!user) {
-                res.status(400).json({ status: 'Email doesn\'t exist.' });
+                res.status(404).json({ status: 'Email doesn\'t exist.' });
                 res.end();
                 return;
             };
@@ -32,7 +32,7 @@ router.post('/login', (req, res) => {
                         res.json({ status: 'User successfully logged in.', user: userToken });
                         res.end();
                     } else {
-                        res.status(400).json({ status: 'Wrong password.' });
+                        res.status(403).json({ status: 'Wrong password.' });
                         res.end();
                     }
                 });

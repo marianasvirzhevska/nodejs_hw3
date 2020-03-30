@@ -1,0 +1,15 @@
+const TRUCK_STATUS = {
+    IN_SERVICE: 'IN_SERVICE',
+    ON_LOAD: 'ON_LOAD',
+};
+
+const TRUCK_TYPES = {
+    SPRINTER: 'SPRINTER',
+    SMALL_STRAIGHT: 'SMALL_STRAIGHT',
+    LARGE_STRAIGHT: 'LARGE_STRAIGHT',
+};
+
+module.exports = {
+    TRUCK_STATUS,
+    TRUCK_TYPES,
+};
