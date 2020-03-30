@@ -32,6 +32,11 @@ const truckValidateSchema = Joi.object({
     name: Joi.string().required(),
 });
 
+const truckUpdateSchema = Joi.object({
+    type: Joi.string().required(),
+    name: Joi.string().required(),
+});
+
 function assignTruckTo(truckId, userId) {
     return TruckModel.updateOne(
         { _id: objectID(truckId) },
@@ -49,33 +54,6 @@ function unassignUserTrucksExceptOne(skipTruckId, userId) {
     );
 }
 
-
-// TruckModel.findById(truck._id, (err, dbTruck) => {
-//     if (err) {
-//         console.error(err);
-
-//         res.status(500).json({ status: 'Truck not found.' });
-//         res.end();
-//         return;
-//     }
-
-//     if (dbTruck.assigned_to) {
-//         res.status(500).json({ status: 'Truck editing not permitted.' });
-//         res.end();
-//     } else {
-//         TruckModel.updateOne({ _id: objectID(truck._id) }, { $set: truck })
-//             .then((raw) => {
-//                 res.json({ status: 'Truck profile edited.' });
-//                 res.end();
-//             })
-//             .catch((err) => {
-//                 console.error(err);
-//                 res.status(500).json({ status: 'Error. Try again later.' });
-//                 res.end();
-//             });
-//     }
-// });
-
 function findTruckById(truckId) {
     return TruckModel.findById(truckId);
 };
@@ -84,11 +62,22 @@ function updateTruck(truckId, doc) {
     return TruckModel.updateOne({ _id: objectID(truckId) }, { $set: doc });
 };
 
+function findTruck(query) {
+    return TruckModel.find(query);
+}
+
+function deleteTruck(truckId) {
+    return TruckModel.deleteOne({ _id: objectID(truckId) });
+}
+
 module.exports = {
     TruckModel,
     truckValidateSchema,
+    truckUpdateSchema,
     assignTruckTo,
     unassignUserTrucksExceptOne,
     findTruckById,
     updateTruck,
+    findTruck,
+    deleteTruck,
 };

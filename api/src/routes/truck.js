@@ -3,12 +3,15 @@ const router = express.Router();
 const {
     TruckModel,
     truckValidateSchema,
+    truckUpdateSchema,
     assignTruckTo,
     unassignUserTrucksExceptOne,
     findTruckById,
     updateTruck,
+    findTruck,
+    deleteTruck,
 } = require('../models/truckModel');
-const objectID = require('mongodb').ObjectID;
+const errorHandler = require('../api/errorHandler');
 
 router.post('/truck', (req, res) => {
     const user = req.user;
@@ -30,8 +33,7 @@ router.post('/truck', (req, res) => {
 
         if (error) {
             const errors = error.details;
-            res.json(errors);
-            res.end();
+            errorHandler(errors, res, errors);
             return;
         }
 
@@ -39,8 +41,7 @@ router.post('/truck', (req, res) => {
 
         dbTruck.save((err) => {
             if (err) {
-                res.status(500).json({ status: 'Error occurred. Try again later' });
-                res.end();
+                errorHandler('Error occurred. Try again later', res, err);
                 throw err;
             } else {
                 res.json({ status: 'Truck successfully created', dbTruck });
@@ -57,11 +58,10 @@ router.get('/truck', (req, res) => {
         res.status(401).json({ status: 'Invalid user token.' });
         res.end();
     } else {
-        TruckModel.find({ created_by: user.id })
+        findTruck({ created_by: user.id })
             .then((trucks) => {
                 if (!trucks.length) {
-                    res.json({ status: 'No trucks found.' });
-                    res.end();
+                    errorHandler('No trucks found.', res);
                     return;
                 };
 
@@ -78,36 +78,30 @@ router.put('/truck', (req, res) => {
         res.end();
     } else {
         const truck = req.body;
+        const { value, error } = truckUpdateSchema.validate(truck);
 
         findTruckById(truck._id)
             .then((dbTruck) => {
                 if (dbTruck.assigned_to) {
-                    res.status(500).json({ status: 'Truck editing not permitted.' });
-                    res.end();
+                    errorHandler('Truck editing not permitted.', res);
                 } else {
-                    updateTruck(truck._id, truck)
-                        .then((raw) => {
+                    updateTruck(truck._id, value)
+                        .then(() => {
                             res.json({ status: 'Truck profile edited.' });
                             res.end();
                         })
                         .catch((err) => {
-                            console.error(err);
-                            res.status(500).json({ status: 'Error. Try again later.' });
-                            res.end();
+                            errorHandler('Error. Try again later.', res, err);
                         });
                 }
             })
             .catch((err) => {
-                console.error(err);
-
-                res.status(500).json({ status: 'Truck not found.' });
-                res.end();
-                return;
+                errorHandler('Truck not found.', res);
             });
     }
 });
 
-router.put('/truck/assign', (req, res) => {
+router.patch('/truck', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
 
@@ -116,17 +110,15 @@ router.put('/truck/assign', (req, res) => {
         res.end();
     } else {
         assignTruckTo(_id, user.id)
-            .then((raw) => {
+            .then(() => {
                 unassignUserTrucksExceptOne(_id, user.id)
-                    .then((r) => {
+                    .then(() => {
                         res.json({ status: 'Truck assigned.' });
                         res.end();
                     });
             })
             .catch((err) => {
-                console.error(err);
-                res.status(500).json({ status: 'Error. Try again later.' });
-                res.end();
+                errorHandler('Error. Try again later.', res, err);
             });
     }
 });
@@ -139,26 +131,21 @@ router.delete('/truck', (req, res) => {
         res.status(401).json({ status: 'Invalid user token.' });
         res.end();
     } else {
-        TruckModel.findById(_id, (err, dbTruck) => {
-            if (err) {
-                console.error(err);
-
-                res.status(500).json({ status: 'Truck not found.' });
-                res.end();
-                return;
-            }
-
-            if (dbTruck.assigned_to) {
-                res.status(500).json({ status: 'Deleting forbiden.' });
-                res.end();
-            } else {
-                TruckModel.deleteOne({ _id: objectID(_id) })
-                    .then(() => {
-                        res.json({ status: 'Truck deleted.' });
-                        res.end();
-                    });
-            }
-        });
+        findTruckById(_id)
+            .then((dbTruck) => {
+                if (dbTruck.assigned_to) {
+                    errorHandler('Deleting forbiden.', res, err);
+                } else {
+                    deleteTruck(_id)
+                        .then(() => {
+                            res.json({ status: 'Truck deleted.' });
+                            res.end();
+                        });
+                }
+            })
+            .catch((err) => {
+                errorHandler('Truck not found.', res, err);
+            });
     }
 });
 
