@@ -155,8 +155,6 @@ router.put('/loads/post', (req, res) => {
         updateLoad(_id, doc, log)
             .then(() => {
                 findTruck(_id, res);
-                // res.json({ status: 'Load posted.' });
-                // res.end();
             })
             .catch((err) => {
                 errorHandler('Error. Try again later.', res, err);

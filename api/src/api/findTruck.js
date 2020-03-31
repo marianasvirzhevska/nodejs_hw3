@@ -4,9 +4,19 @@ const {
     updateLoad,
 } = require('../models/loadModel');
 const {
+    updateUser,
+} = require('../models/userModel');
+const {
     findTruck: findTruckByQuery,
+    findTruckById,
 } = require('../models/truckModel');
 const errorHandler = require('../api/errorHandler');
+const {
+    LOAD_STATE,
+    LOAD_STATUS,
+    TRUCK_STATUS,
+} = require('../constants');
+
 
 function findTruck(loadId, res) {
     findLoadById(loadId)
@@ -17,20 +27,38 @@ function findTruck(loadId, res) {
                         const validTrucks = trucks.filter((truck) => isTruckMatch(dbLoad, truck.type));
                         const smalestValidTruck = getSmallestPayloadTrucks(validTrucks);
 
-                        const assignLoadQuery = {
+                        const updateLoadQuery = {
                             assigned_to: smalestValidTruck[0].assigned_to,
+                            state: LOAD_STATE.ON_ROUTE_TO_PICK_UP,
+                            status: LOAD_STATUS.ASSIGNED,
                         };
 
-                        const assignDriverQuery = {
+                        const updateDriverQuery = {
                             assigned_load: dbLoad._id,
                         };
 
-                        updateLoad(dbLoad._id, assignLoadQuery)
+                        const updateTruckQuery = {
+                            status: TRUCK_STATUS.ON_LOAD,
+                        };
+
+                        updateLoad(dbLoad._id, updateLoadQuery)
                             .then(() => {
-                                res.json({ status: 'Load assigned.', assignLoadQuery });
+                                res.json({ status: 'Load assigned.', updateLoadQuery });
                                 res.end();
                             })
                             .catch((err) => errorHandler('Can\'t assign driver', res, err));
+
+                        updateUser(smalestValidTruck[0].assigned_to, updateDriverQuery)
+                            .then(() => {
+                                console.log('Load successfuly assigned to user.');
+                            })
+                            .catch((err) => errorHandler('Server error.', res, err));
+
+                        findTruckById(smalestValidTruck[0]._id, updateTruckQuery)
+                            .then(() => {
+                                console.log('Truck successfuly updated.');
+                            })
+                            .catch((err) => errorHandler('Server error.', res, err));
                     } else {
                         console.log('no trucks');
                     }

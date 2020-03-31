@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { UserModel, userUpdateSchema } = require('../models/userModel');
-const objectID = require('mongodb').ObjectID;
+const { userUpdateSchema, findUserById } = require('../models/userModel');
+const errorHandler = require('../api/errorHandler');
 
 router.get('/profile', (req, res) => {
     const user = req.user;
@@ -12,25 +12,20 @@ router.get('/profile', (req, res) => {
     } else {
         const { id } = user;
 
-        UserModel.findById(id, (err, dbUser) => {
-            if (err) {
-                console.error(err);
+        findUserById(id)
+            .then((dbUser) => {
+                const userInfo = {
+                    firstName: dbUser.firstName,
+                    lastName: dbUser.lastName,
+                    role: dbUser.role,
+                    email: dbUser.email,
+                    phone: dbUser.phone,
+                };
 
-                res.status(500).json({ status: 'User info not found.' });
+                res.json({ status: 'Ok', userInfo });
                 res.end();
-            }
-
-            const userInfo = {
-                firstName: dbUser.firstName,
-                lastName: dbUser.lastName,
-                role: dbUser.role,
-                email: dbUser.email,
-                phone: dbUser.phone,
-            };
-
-            res.json({ status: 'Ok', userInfo });
-            res.end();
-        });
+            })
+            .catch((err) => errorHandler('User info not found.', res, err));
     }
 });
 
@@ -46,19 +41,15 @@ router.put('/profile', (req, res) => {
         const { value, error } = userUpdateSchema.validate(update);
 
         if (error) {
-            console.error(error);
-            res.status(500).json({ status: 'Error. Try again later.' });
-            res.end();
+            errorHandler('Error. Try again later.', res, error);
         } else {
-            UserModel.updateOne({ _id: objectID(id) }, { $set: value })
-                .then((raw) => {
+            updateUser(id, value)
+                .then(() => {
                     res.json({ status: 'User profile edited.' });
                     res.end();
                 })
                 .catch((err) => {
-                    console.error(err);
-                    res.status(500).json({ status: 'Error. Try again later.' });
-                    res.end();
+                    errorHandler('Error. Try again later.', res, err);
                 });
         }
     }

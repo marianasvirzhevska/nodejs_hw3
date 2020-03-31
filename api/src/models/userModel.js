@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
+const objectID = require('mongodb').ObjectID;
 
 const userSchema = mongoose.Schema({
     firstName: String,
@@ -48,9 +49,24 @@ const userPassSchema = Joi.object({
     password_repeat: Joi.ref('password'),
 });
 
+function findUser(query) {
+    return UserModel.find(query);
+};
+
+function findUserById(userId) {
+    return UserModel.findById(userId);
+};
+
+function updateUser(userId, doc) {
+    return UserModel.updateOne({ _id: objectID(userId) }, { $set: doc });
+};
+
 module.exports = {
     UserModel,
     userUpdateSchema,
     userValidateSchema,
     userPassSchema,
+    findUser,
+    findUserById,
+    updateUser,
 };
