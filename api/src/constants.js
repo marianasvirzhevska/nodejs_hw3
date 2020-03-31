@@ -24,9 +24,15 @@ const LOAD_STATE = {
     PENDING: 'PENDING',
 };
 
+const USER_ROLE = {
+    SHIPPER: 'SHIPPER',
+    DRIVER: 'DRIVER',
+};
+
 module.exports = {
     TRUCK_STATUS,
     TRUCK_TYPE,
     LOAD_STATUS,
     LOAD_STATE,
+    USER_ROLE,
 };

@@ -20,6 +20,7 @@ router.get('/profile', (req, res) => {
                     role: dbUser.role,
                     email: dbUser.email,
                     phone: dbUser.phone,
+                    assigned_load: `assign ${dbUser.assigned_load}`,
                 };
 
                 res.json({ status: 'Ok', userInfo });

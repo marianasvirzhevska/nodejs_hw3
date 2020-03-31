@@ -1,8 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const objectID = require('mongodb').ObjectID;
 const router = express.Router();
-const { UserModel, userPassSchema } = require('../models/userModel');
+const { userPassSchema, updateUser } = require('../models/userModel');
+const errorHandler = require('../api/errorHandler');
 
 router.put('/change-pass', (req, res) => {
     const user = req.user;
@@ -20,28 +20,23 @@ router.put('/change-pass', (req, res) => {
         const { value, error } = userPassSchema.validate(validatePass);
 
         if (error) {
-            console.error(error);
-            res.status(500).json({ status: 'Password didn\'t mutch' });
-            res.end();
+            errorHandler('Password didn\'t mutch', res, error);
             return;
         }
 
-        bcrypt.hash(validatePass.password, 10, (err, hash) => {
+        bcrypt.hash(value.password, 10, (err, hash) => {
             if (err) {
-                res.status(500).json({ status: 'Error occurred. Try again later' });
-                res.end();
-                throw err;
+                errorHandler('Error occurred. Try again later', res, err);
+                return;
             }
 
-            UserModel.updateOne({ _id: objectID(user.id) }, { $set: { password: hash } })
-                .then((raw) => {
+            updateUser(user.id, { password: hash })
+                .then(() => {
                     res.json({ status: 'Password changed.' });
                     res.end();
                 })
                 .catch((err) => {
-                    console.error(err);
-                    res.status(500).json({ status: 'Error. Try again later.' });
-                    res.end();
+                    errorHandler('Error. Try again later.', res, err);
                 });
         });
     }

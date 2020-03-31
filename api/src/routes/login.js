@@ -13,8 +13,7 @@ router.post('/login', (req, res) => {
     findUser({ email })
         .then(([ user ]) => {
             if (!user) {
-                res.status(404).json({ status: 'Email doesn\'t exist.' });
-                res.end();
+                errorHandler('Email doesn\'t exist.', res, null, 403);
                 return;
             };
 

@@ -12,14 +12,13 @@ const {
     deleteTruck,
 } = require('../models/truckModel');
 const errorHandler = require('../api/errorHandler');
+const validateDriver = require('../api/validateDriver');
 
 router.post('/truck', (req, res) => {
     const user = req.user;
+    const { valid, permition } = validateDriver(user, res);
 
-    if (!req.user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    if (valid && permition) {
         const { id } = user;
         const { type, name } = req.body;
 
@@ -53,11 +52,9 @@ router.post('/truck', (req, res) => {
 
 router.get('/truck', (req, res) => {
     const user = req.user;
+    const { valid } = validateDriver(user, res);
 
-    if (!req.user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    if (valid) {
         findTruck({ created_by: user.id })
             .then((trucks) => {
                 if (!trucks.length) {
@@ -68,15 +65,15 @@ router.get('/truck', (req, res) => {
                 res.json({ status: 'Ok', trucks });
                 res.end();
             })
-            .catch((err) => console.error(err));
+            .catch((err) => errorHandler('Server error.', res, err));
     }
 });
 
 router.put('/truck', (req, res) => {
-    if (!req.user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    const user = req.user;
+    const { valid, permition } = validateDriver(user, res);
+
+    if (valid && permition) {
         const truck = req.body;
         const { value, error } = truckUpdateSchema.validate(truck);
 
@@ -104,11 +101,9 @@ router.put('/truck', (req, res) => {
 router.patch('/truck', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
+    const { valid, permition } = validateDriver(user, res);
 
-    if (!user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    if (valid && permition) {
         assignTruckTo(_id, user.id)
             .then(() => {
                 unassignUserTrucksExceptOne(_id, user.id)
@@ -126,11 +121,9 @@ router.patch('/truck', (req, res) => {
 router.delete('/truck', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
+    const { valid, permition } = validateDriver(user, res);
 
-    if (!user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    if (valid && permition) {
         findTruckById(_id)
             .then((dbTruck) => {
                 if (dbTruck.assigned_to) {

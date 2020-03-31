@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
 const { TRUCK_STATUS } = require('../constants');
-const objectID = require('mongodb').ObjectID;
+const ObjectID = require('mongodb').ObjectID;
 
-const truckSchema = mongoose.Schema({
+const truckSchema = new mongoose.Schema({
     created_by: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -39,7 +39,7 @@ const truckUpdateSchema = Joi.object({
 
 function assignTruckTo(truckId, userId) {
     return TruckModel.updateOne(
-        { _id: objectID(truckId) },
+        { _id: new ObjectID(truckId) },
         { $set: { assigned_to: userId } },
     );
 }
@@ -47,8 +47,8 @@ function assignTruckTo(truckId, userId) {
 function unassignUserTrucksExceptOne(skipTruckId, userId) {
     return TruckModel.updateMany(
         {
-            _id: { $ne: objectID(skipTruckId) },
-            assigned_to: objectID(userId),
+            _id: { $ne: new ObjectID(skipTruckId) },
+            assigned_to: new ObjectID(userId),
         },
         { assigned_to: null },
     );
@@ -59,7 +59,7 @@ function findTruckById(truckId) {
 };
 
 function updateTruck(truckId, doc) {
-    return TruckModel.updateOne({ _id: objectID(truckId) }, { $set: doc });
+    return TruckModel.updateOne({ _id: new ObjectID(truckId) }, { $set: doc });
 };
 
 function findTruck(query) {
@@ -67,7 +67,7 @@ function findTruck(query) {
 }
 
 function deleteTruck(truckId) {
-    return TruckModel.deleteOne({ _id: objectID(truckId) });
+    return TruckModel.deleteOne({ _id: new ObjectID(truckId) });
 }
 
 module.exports = {

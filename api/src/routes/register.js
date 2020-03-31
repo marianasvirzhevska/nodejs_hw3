@@ -25,7 +25,7 @@ router.post('/register', (req, res) => {
     const dbUser = new UserModel(value);
     const { email, password } = dbUser;
 
-    findUser(email)
+    findUser({ email })
         .then((user) => {
             if (user.length) {
                 errorHandler('Email address already in use', res, null, 401);

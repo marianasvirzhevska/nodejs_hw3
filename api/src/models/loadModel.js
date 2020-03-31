@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const Joi = require('@hapi/joi');
-const objectID = require('mongodb').ObjectID;
+const ObjectID = require('mongodb').ObjectID;
 const { LOAD_STATUS } = require('../constants');
 
-const logsSchema = mongoose.Schema({
+const logsSchema = new mongoose.Schema({
     message: {
         type: String,
         default: 'Load created.',
@@ -14,7 +14,7 @@ const logsSchema = mongoose.Schema({
     },
 });
 
-const loadSchema = mongoose.Schema({
+const loadSchema = new mongoose.Schema({
     name: String,
     created_by: {
         type: mongoose.Schema.Types.ObjectId,
@@ -93,13 +93,13 @@ function findLoadById(loadId) {
 function updateLoad(loadId, doc, log) {
     return LoadModel.updateOne(
         {
-            _id: objectID(loadId),
+            _id: new ObjectID(loadId),
         },
         { $set: doc, $push: { logs: log } });
 }
 
 function deleteLoad(loadId) {
-    return LoadModel.deleteOne({ _id: objectID(loadId) });
+    return LoadModel.deleteOne({ _id: new ObjectID(loadId) });
 }
 
 module.exports = {

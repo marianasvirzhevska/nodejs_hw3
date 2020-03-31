@@ -12,14 +12,13 @@ const {
 const { LOAD_STATUS, LOAD_STATE } = require('../constants');
 const errorHandler = require('../api/errorHandler');
 const findTruck = require('../api/findTruck');
+const validateShipper = require('../api/validateShipper');
 
 router.post('/loads', (req, res) => {
     const user = req.user;
+    const isValid = validateShipper(user, res);
 
-    if (!req.user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    if (isValid) {
         const { id } = user;
         const { name, dimensions, payload } = req.body;
 
@@ -54,11 +53,9 @@ router.post('/loads', (req, res) => {
 
 router.get('/loads', (req, res) => {
     const user = req.user;
+    const isValid = validateShipper(user, res);
 
-    if (!req.user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    if (isValid) {
         findLoad({ created_by: user.id })
             .then((loads) => {
                 if (!loads.length) {
@@ -74,10 +71,9 @@ router.get('/loads', (req, res) => {
 });
 
 router.put('/loads', (req, res) => {
-    if (!req.user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    const isValid = validateShipper(req.user, res);
+
+    if (isValid) {
         const load = req.body;
         const { value, error } = loadUpdateSchema.validate(load);
         const log = {
@@ -113,11 +109,9 @@ router.put('/loads', (req, res) => {
 router.delete('/loads', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
+    const isValid = validateShipper(user, res);
 
-    if (!user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    if (isValid) {
         findLoadById(_id)
             .then((dbLoad) => {
                 if (dbLoad.status !== LOAD_STATUS.NEW) {
@@ -135,9 +129,11 @@ router.delete('/loads', (req, res) => {
     }
 });
 
-router.put('/loads/post', (req, res) => {
+router.patch('/loads', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
+    const isValid = validateShipper(user, res);
+
     const doc = {
         status: LOAD_STATUS.POSTED,
         state: LOAD_STATE.PENDING,
@@ -148,10 +144,7 @@ router.put('/loads/post', (req, res) => {
         time: Date.now(),
     };
 
-    if (!user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    if (isValid) {
         updateLoad(_id, doc, log)
             .then(() => {
                 findTruck(_id, res);
