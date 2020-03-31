@@ -11,6 +11,7 @@ const {
 } = require('../models/loadModel');
 const { LOAD_STATUS, LOAD_STATE } = require('../constants');
 const errorHandler = require('../api/errorHandler');
+const findTruck = require('../api/findTruck');
 
 router.post('/loads', (req, res) => {
     const user = req.user;
@@ -153,8 +154,9 @@ router.put('/loads/post', (req, res) => {
     } else {
         updateLoad(_id, doc, log)
             .then(() => {
-                res.json({ status: 'Load posted.' });
-                res.end();
+                findTruck(_id, res);
+                // res.json({ status: 'Load posted.' });
+                // res.end();
             })
             .catch((err) => {
                 errorHandler('Error. Try again later.', res, err);
