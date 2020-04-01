@@ -14,9 +14,8 @@
       4,
       { "flatTernaryExpressions": false }
     ],
-    "multiline-ternary": ["error", "always"],
+    "object-curly-spacing": ["error", "always"],
     "require-jsdoc": 0,
-    "max-len": ["error", 140],
-    "operator-linebreak": ["error", "before"]
+    "max-len": ["error", 140]
   }
 }

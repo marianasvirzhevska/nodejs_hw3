@@ -1,8 +1,8 @@
 import React from 'react';
-import {Route, Redirect} from 'react-router-dom';
-import {isLogin} from '../../utils/auth';
+import { Route, Redirect } from 'react-router-dom';
+import { isLogin } from '../../utils/auth';
 
-const PublicRoute = ({component: Component, restricted, ...rest}) => {
+const PublicRoute = ({ component: Component, restricted, ...rest }) => {
     return (
         <Route {...rest} render={(props) => (
             isLogin() && restricted ?

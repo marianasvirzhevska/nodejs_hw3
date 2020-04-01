@@ -1,0 +1,382 @@
+@import './variables'
+@import './mixins'
+
+input:-webkit-autofill
+  -webkit-box-shadow: inset 0 0 0 50px #fff !important
+  -webkit-text-fill-color: #000 !important
+  color: #000 !important
+
+.dashboard-page // main dashboard container
+  width: 100%
+  height: 100vh
+  //overflow: hidden
+  @include flex
+
+.dashboard-content
+  width: 100%
+  height: 100%
+  @include flex
+  flex-direction: column
+  background: $greyBg
+  padding-bottom: 30px
+  overflow-y: auto
+  &.white-bg
+    background: $white
+  a
+    text-decoration: none
+  @media(max-width: 600px)
+    padding-bottom: 0
+
+.dialog-form //styles for form on dialog component
+  margin: 30px auto 0
+  width: 100%
+  @media(max-width: 600px)
+    margin-top: 10px
+
+.dialog-action // dialog bottom actions styles
+  width: 100%
+  @include flex
+  align-items: center
+  justify-content: center
+  margin: 30px 0
+  @media(max-width: 600px)
+    margin: 15px 0
+
+.flexed-row
+  @include flex
+  align-items: flex-start
+  margin-bottom: 16px
+  &.title-row
+    justify-content: center
+    margin-top: 20px
+  .half-column
+    flex: 0 0.5 50%
+    &:first-child
+      padding-right: 14px
+    &:last-child
+      padding-left: 14px
+  .one-column
+    flex: 0 0.5 48%
+    padding-right: 14px
+  .third-column
+    flex: 0 0.33 33%
+    &:first-child
+      padding-right: 14px
+    &:nth-child(2)
+      padding: 0 14px
+    &:last-child
+      padding-left: 14px
+  .fourth-column
+    flex: 0 0.25 25%
+  .one-fourth-column
+    flex: 0 0.22 22%
+    padding-left: 14px
+    position: relative
+
+  .one-third-column
+    flex: 0 0.30 30%
+    padding-right: 14px
+  .one-fifth-column
+    flex: 0 0.18 18%
+    padding-top: 14px
+    padding-right: 14px
+
+.project-title
+  @include flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  span
+    font-size: $smallFont
+    color: $greyFont
+    margin-top: 14px
+
+.paper-wrap
+  padding: 20px 20px 0
+  @media(max-width: 600px)
+    padding: 15px 10px 15px
+
+.table-cover
+  padding: 10px 30px 0 30px
+  table
+    th
+      border-bottom: 1px solid #e3e4e8
+      &:last-child
+        text-align: right
+    th, td
+      padding-left: 0
+    tr
+      td:last-child
+        text-align: right
+      &:last-child td
+        border-bottom: none
+  @media(max-width: 600px)
+    padding: 10px 12px 0 12px
+  .cell-mobile
+    @media (max-width: 600px)
+      display: none
+
+.table-project-title // project title cell styles
+  @include flex
+  align-items: center
+  p
+    margin: 0
+    padding-left: 16px
+  @media(max-width: 600px)
+    p
+      padding-left: 8px
+    div
+      width: 30px
+      height: 30px
+      font-size: $mainFont
+
+.avatar
+  @media(max-width: 600px)
+    width: 30px !important
+    height: 30px !important
+    font-size: $mainFont !important
+
+.actions // table action column styles
+  @include flex
+  align-items: center
+  justify-content: flex-end
+  .actions-mobile
+    @media(max-width: 600px)
+      display: none
+
+// Delete dialog styles
+.delete-container
+  padding: 30px 20px
+  min-width: 400px
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  @media(max-width: 600px)
+    min-width: auto
+  .delete-title
+    font-size: $subTitle
+    font-weight: 500
+    margin: 24px 0 26px
+  .delete-button
+    color: $white
+    background: $error
+    padding: 8px 30px
+    font-size: $mainFont
+    &:hover
+      background: $error
+  .cancel-button
+    margin-top: 14px
+    font-size: $mainFont
+    text-decoration: underline
+    &:hover
+      background: none
+  .agency-info
+    padding: 20px 0
+    min-width: 280px
+    margin: 0 auto 30px
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1)
+    border-top: 1px solid rgba(0, 0, 0, 0.1)
+  .agency-details
+    margin: 0
+    color: $black
+    font-weight: 600
+    text-align: center
+    p
+      margin: 0
+      color: #666666
+      font-weight: 400
+      padding-top: 6px
+
+.user-info
+  min-width: 280px
+  margin: 0 auto 30px
+  display: flex
+  align-items: center
+  white-space: nowrap
+  padding: 20px 0
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1)
+  border-top: 1px solid rgba(0, 0, 0, 0.1)
+  &.details
+    border-top: none
+
+  .user-img
+    width: 44px
+    min-width: 44px
+    height: 44px
+    border-radius: 50%
+    overflow: hidden
+    background: $white
+  .user-details
+    margin: 0
+    padding-left: 8px
+    color: $black
+    font-weight: 600
+    font-size: $mainFont
+    span
+      color: #666666
+      font-weight: 400
+  .task-details
+    margin: 0
+    width: 100%
+    padding-left: 8px
+    color: $black
+    font-weight: 400
+    font-size: $mainFont
+    position: relative
+    h4
+      margin: 10px 0
+    p
+      margin: 5px 0
+      white-space: normal
+    .name
+      font-weight: 500
+      margin: 0 0 8px
+    .email
+      margin: 0
+      color: $greyFont
+    .role
+      top: 0
+      right: 0
+      margin: 0
+      position: absolute
+      color: $secondGreyFont
+      .admin
+        color: $blue
+        font-weight: 500
+
+.user-info-title
+  font-weight: 500
+  font-size: $menuFont
+
+.user-tasks
+  max-height: 240px
+  overflow-y: auto
+  margin-bottom: 30px
+
+.scroll-container
+  overflow: auto
+  .container
+    padding-top: 20px
+    margin-bottom: 40px
+
+.container
+  width: 100%
+  max-width: 804px
+  margin: 0 auto
+
+.forms-container
+  padding: 30px 40px 40px
+  .forms-title
+    font-size: 26px
+    font-weight: 500
+  .forms-subtitle
+    font-size: $subTitle
+    font-weight: 500
+    margin: 42px 0 20px
+    position: relative
+
+.back-btn
+  padding-left: 40px
+  @media(max-width: 600px)
+    padding-left: 0
+    span
+      display: none
+  a
+    @include flex
+    align-items: center
+    color: $greyFont
+    font-size: $menuFont
+    font-weight: 500
+    img
+      padding-right: 12px
+
+
+.task-title
+  &-info
+    h4
+      color: $greyFont
+      font-size: $mainFont
+      font-weight: 400
+      margin: 10px 0
+      span
+        color: $black
+        font-weight: 500
+
+  &-row
+    @include flex
+    justify-content: space-between
+    h2
+      flex: 0 0.8 80%
+      margin: 0 !important
+    @media(max-width: 600px)
+      flex-direction: column
+      h2
+        flex: 0 0 auto
+  &-menu
+    align-self: flex-end
+    flex: 0 0.16 16%
+    padding-left: 14px
+    border-left: 1px solid $borderColor
+    @media(max-width: 600px)
+      align-self: flex-start
+      flex: 0 0 auto
+      padding-left: 0
+      border-left: none
+      margin-top: 12px
+
+
+.task-description
+  margin: 30px 0 0
+
+.no-results
+  padding: 16px 0 30px
+  font-size: $menuFont
+  color: $greyFont
+
+// Styles for Filters Dialog
+.filter-dialog
+  width: 100%
+  min-height: 150px
+  padding: 18px 36px
+  &-title
+    margin: 0 0 4px
+    color: $black
+    font-weight: 500
+    font-size: $menuFont
+  &-action
+    text-align: center
+  @media(max-width: 600px)
+    padding: 18px 12px
+    width: 100%
+
+
+.user-task
+  width: 100%
+  padding: 2px 0
+  border-bottom: 1px solid rgba(0,0,0,0.05)
+  a
+    width: 100%
+    @include flex
+    justify-content: space-between
+    text-decoration: none
+    color: $black
+    .main
+      @include flex
+      align-items: center
+      p
+        padding-left: 8px
+
+.task-page
+  @media (max-width: 600px)
+    .table-cover
+      padding: 0
+    .forms-container
+      padding: 18px
+
+.user-info-dialog
+  width: 100%
+
+
+
+
