@@ -48,6 +48,7 @@ const userUpdateSchema = Joi.object({
     firstName: Joi.string().min(2).max(30),
     lastName: Joi.string().min(2).max(30),
     phone: Joi.string().max(12),
+    role: role,
 });
 
 const userPassSchema = Joi.object({
