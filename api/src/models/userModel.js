@@ -23,13 +23,15 @@ const userSchema = new mongoose.Schema({
 
 const UserModel = mongoose.model('User', userSchema);
 
+const passPattern = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/);
+
 const firstName = Joi.string().min(2).max(30);
 const lastName = Joi.string().min(2).max(30);
 const email = Joi.string().email();
 const phone = Joi.string().min(10).max(12);
 const created = Joi.date().max('1-1-2050').iso();
 const role = Joi.string();
-const password = Joi.string().pattern(/^[a-zA-Z0-9]{8,30}$/);
+const password = Joi.string().pattern(passPattern);
 const assignedLoad = Joi.string();
 
 const userValidateSchema = Joi.object({
@@ -40,7 +42,7 @@ const userValidateSchema = Joi.object({
     created: created,
     role: role.required(),
     password: password.required(),
-    pasword_repeat: Joi.ref('password'),
+    password_repeat: Joi.ref('password'),
     assigned_load: assignedLoad,
 });
 
