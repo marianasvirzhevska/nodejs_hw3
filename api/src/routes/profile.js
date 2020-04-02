@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { userUpdateSchema, findUserById } = require('../models/userModel');
+const { userUpdateSchema, findUserById, updateUser } = require('../models/userModel');
 const errorHandler = require('../api/errorHandler');
 
 router.get('/profile', (req, res) => {
