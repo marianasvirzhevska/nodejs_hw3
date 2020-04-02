@@ -1,0 +1,62 @@
+@import '../../../styles/variables'
+@import '../../../styles/mixins'
+
+.root
+  label
+    @include flex
+    align-items: center
+    position: relative
+    padding-left: 35px
+    margin-bottom: 10px
+    min-height: 22px
+    cursor: pointer
+    -webkit-user-select: none
+    -moz-user-select: none
+    -ms-user-select: none
+    user-select: none
+    p
+      margin: 0
+      font-size: $smallFont
+      font-weight: 500
+      color: $greyFont
+    input
+      position: absolute
+      cursor: pointer
+      opacity: 0
+      height: 0
+      width: 0
+      & ~ .checkMark
+        background-color: $white
+      &:checked ~ .checkMark
+        background-color: $blue
+        border-color: $blue
+        &:after
+          display: block
+    .checkMark:after
+      left: 7px
+      top: 3px
+      width: 4px
+      height: 8px
+      border: solid $white
+      border-width: 0 2px 2px 0
+      -webkit-transform: rotate(45deg)
+      -ms-transform: rotate(45deg)
+      transform: rotate(45deg)
+
+.checkMark
+  position: absolute
+  top: 0
+  left: 0
+  height: 20px
+  width: 20px
+  background-color: $white
+  @include border-radius(3px)
+  border: 1px solid $borderColor
+  &:after
+    content: ""
+    position: absolute
+    display: none
+
+.error
+  color: $red
+  font-size: $tableFont

@@ -1,0 +1,58 @@
+@import '../../../styles/variables'
+@import '../../../styles/mixins'
+
+.root
+  width: 100%
+
+.group
+  position: relative
+  display: flex
+  align-items: center
+  margin: 15px 0
+
+.group label
+  padding-left: 30px
+  position: relative
+  color: $black
+
+.hidden
+  left: 0
+  width: 0
+  height: 0
+  opacity: 0
+  position: absolute
+
+.radio
+  left: 0
+  width: 20px
+  height: 20px
+  display: inline-block
+  -webkit-border-radius: 50%
+  -moz-border-radius: 50%
+  border-radius: 50%
+  border: 1px solid
+  border-color: #a4a6aa
+  position: absolute
+
+.radio::after
+  top: 5px
+  left: 5px
+  width: 10px
+  height: 10px
+  display: block
+  content: ' '
+  position: absolute
+  background: #e3e4e8
+  -webkit-border-radius: 50%
+  -moz-border-radius: 50%
+  border-radius: 50%
+
+input.hidden:checked ~ .radio 
+  border-color: #00c853
+
+input.hidden:checked ~ .radio::after
+  background: #00c853
+
+.error
+  color: $red
+  font-size: $tableFont
