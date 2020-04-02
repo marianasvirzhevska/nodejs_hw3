@@ -10,7 +10,6 @@ module.exports = (req, res, next) => {
     } else {
         // JWT auiwgwjhfgioajoij
         const [token_type, jwt_token] = reqHeaders.split(' ');
-
         req.user = jwt.verify(jwt_token, secret);
 
         next();

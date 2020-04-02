@@ -3,17 +3,22 @@ const router = express.Router();
 const {
     LoadModel,
     loadValidateSchema,
+    loadUpdateSchema,
+    findLoad,
+    findLoadById,
+    updateLoad,
+    deleteLoad,
 } = require('../models/loadModel');
-const objectID = require('mongodb').ObjectID;
-const { LOAD_STATUS } = require('../constants');
+const { LOAD_STATUS, LOAD_STATE } = require('../constants');
+const errorHandler = require('../api/errorHandler');
+const findTruck = require('../api/findTruck');
+const validateShipper = require('../api/validateShipper');
 
 router.post('/loads', (req, res) => {
     const user = req.user;
+    const isValid = validateShipper(user, res);
 
-    if (!req.user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    if (isValid) {
         const { id } = user;
         const { name, dimensions, payload } = req.body;
 
@@ -37,9 +42,7 @@ router.post('/loads', (req, res) => {
 
         dbLoad.save((err) => {
             if (err) {
-                res.status(500).json({ status: 'Error occurred. Try again later' });
-                res.end();
-                throw err;
+                errorHandler('Error occurred. Try again later', res, err);
             } else {
                 res.json({ status: 'Load successfully created', dbLoad });
                 res.end();
@@ -50,122 +53,104 @@ router.post('/loads', (req, res) => {
 
 router.get('/loads', (req, res) => {
     const user = req.user;
+    const isValid = validateShipper(user, res);
 
-    if (!req.user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
-        LoadModel.find({ created_by: user.id })
+    if (isValid) {
+        findLoad({ created_by: user.id })
             .then((loads) => {
                 if (!loads.length) {
-                    res.json({ status: 'No loads found.' });
-                    res.end();
+                    errorHandler('No loads found.', res);
                     return;
                 };
 
                 res.json({ status: 'Ok', loads });
                 res.end();
             })
-            .catch((err) => console.error(err));
+            .catch((err) => errorHandler(err, res));
     }
 });
 
 router.put('/loads', (req, res) => {
-    if (!req.user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
+    const isValid = validateShipper(req.user, res);
+
+    if (isValid) {
         const load = req.body;
-        const { value, error } = loadValidateSchema.validate(load);
+        const { value, error } = loadUpdateSchema.validate(load);
+        const log = {
+            message: 'Load edited.',
+            time: Date.now(),
+        };
 
         if (error) {
             const errors = error.details;
-            res.json(errors);
-            res.end();
+            errorHandler(errors, res);
             return;
         }
 
-        const loadValidated = new LoadModel(value);
-
-        LoadModel.findById(load._id, (err, dbLoad) => {
-            if (err) {
-                console.error(err);
-
-                res.status(500).json({ status: 'Load not found.' });
-                res.end();
-                return;
-            }
-
-            if (dbLoad.status !== LOAD_STATUS.NEW) {
-                res.status(500).json({ status: 'Load editing not permitted.' });
-                res.end();
-            } else {
-                LoadModel.updateOne({ _id: objectID(load._id) }, { $set: loadValidated })
-                    .then((raw) => {
-                        res.json({ status: 'Load edited.' });
-                        res.end();
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        res.status(500).json({ status: 'Error. Try again later.' });
-                        res.end();
-                    });
-            }
-        });
+        findLoadById(load._id)
+            .then((dbLoad) => {
+                if (dbLoad.status !== LOAD_STATUS.NEW) {
+                    errorHandler('Load editing not permitted.', res);
+                } else {
+                    updateLoad(load._id, value, log)
+                        .then(() => {
+                            res.json({ status: 'Load edited.' });
+                            res.end();
+                        })
+                        .catch((err) => {
+                            errorHandler('Error. Try again later.', res, err);
+                        });
+                }
+            })
+            .catch((err) => errorHandler('Load not found.', res, err));
     }
 });
 
 router.delete('/loads', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
+    const isValid = validateShipper(user, res);
 
-    if (!user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
-        LoadModel.findById(_id, (err, dbLoad) => {
-            if (err) {
-                console.error(err);
-
-                res.status(500).json({ status: 'Load not found.' });
-                res.end();
-                return;
-            }
-
-            if (dbLoad.status !== LOAD_STATUS.NEW) {
-                res.status(500).json({ status: 'Deleting forbiden.' });
-                res.end();
-            } else {
-                LoadModel.deleteOne({ _id: objectID(_id) })
-                    .then(() => {
-                        res.json({ status: 'Load deleted.' });
-                        res.end();
-                    });
-            }
-        });
+    if (isValid) {
+        findLoadById(_id)
+            .then((dbLoad) => {
+                if (dbLoad.status !== LOAD_STATUS.NEW) {
+                    errorHandler('Deleting forbiden.', res, null, 403);
+                } else {
+                    deleteLoad(_id)
+                        .then(() => {
+                            res.json({ status: 'Load deleted.' });
+                            res.end();
+                        })
+                        .catch((err) => errorHandler(err, res));
+                }
+            })
+            .catch((err) => errorHandler('Load not found.', res, err));
     }
 });
 
-router.put('/loads/post', (req, res) => {
+router.patch('/loads', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
-    const query = {
+    const isValid = validateShipper(user, res);
+
+    const doc = {
         status: LOAD_STATUS.POSTED,
+        state: LOAD_STATE.PENDING,
     };
 
-    if (!user) {
-        res.status(401).json({ status: 'Invalid user token.' });
-        res.end();
-    } else {
-        LoadModel.updateOne({ _id: objectID(_id) }, { $set: query })
-            .then((raw) => {
-                res.json({ status: 'Load posted.' });
-                res.end();
+    const log = {
+        message: 'Load posted.',
+        time: Date.now(),
+    };
+
+    if (isValid) {
+        updateLoad(_id, doc, log)
+            .then(() => {
+                findTruck(_id, res);
             })
             .catch((err) => {
-                console.error(err);
-                res.status(500).json({ status: 'Error. Try again later.' });
-                res.end();
+                errorHandler('Error. Try again later.', res, err);
             });
     }
 });

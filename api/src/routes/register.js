@@ -7,7 +7,9 @@ const secret = config.get('secret');
 const {
     UserModel,
     userValidateSchema,
+    findUser,
 } = require('../models/userModel');
+const errorHandler = require('../api/errorHandler');
 
 router.post('/register', (req, res) => {
     const user = req.body;
@@ -23,26 +25,24 @@ router.post('/register', (req, res) => {
     const dbUser = new UserModel(value);
     const { email, password } = dbUser;
 
-    UserModel.find({ email })
+    findUser({ email })
         .then((user) => {
             if (user.length) {
-                res.status(500).json({ status: 'Email address already in use' });
-                res.end();
+                errorHandler('Email address already in use', res, null, 401);
                 return;
             }
+
             bcrypt.hash(password, 10, (err, hash) => {
                 dbUser.password = hash;
 
                 if (err) {
-                    res.status(500).json({ status: 'Error occurred. Try again later' });
-                    res.end();
-                    throw err;
+                    errorHandler('Error occurred. Try again later', res, err);
+                    return;
                 }
 
                 dbUser.save((err) => {
                     if (err) {
-                        res.status(500).json({ status: 'Error occurred. Try again later' });
-                        throw err;
+                        errorHandler('Error occurred. Try again later', res, err);
                     } else {
                         const user = {
                             firstName: dbUser.firstName,
