@@ -12,7 +12,7 @@ const Register = () => {
                 </div>
                 <div className="bottom-row">
                     <p>Copyright © 2020 Load Delivery Software Tools</p>
-                    <Link to='/terms'>Terms and conditions</Link>
+                    <Link to="/terms">Terms and conditions</Link>
                 </div>
             </div>
             <div className="form-cover registerForm">

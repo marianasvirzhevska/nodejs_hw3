@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import { Field, reduxForm, getFormValues } from 'redux-form';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
-import { login, editUser } from '../../store/actions';
 import trim from '../../utils/trim';
-// import setUser from '../../utils/setUser';
+import setUser from '../../utils/setUser';
+import * as api from '../../utils/apiRequest';
+import { login } from '../../store/actions';
+
 import Input from '../common/Input';
 
 let LoginForm = (props) => {
@@ -14,16 +16,31 @@ let LoginForm = (props) => {
     const dispatch = useDispatch();
     const history = useHistory();
 
+    const [error, setError] = useState(null);
+
     const formValues = useSelector((state) => getFormValues('login')(state));
+
+    const loginRequest = (user) => {
+        api.request('/login', 'POST', user)
+            .then((res) => res.json())
+            .then((res) => {
+                if (!res.user) {
+                    setError(res.status);
+                } else {
+                    setUser(res.user);
+                    dispatch(login(res.user));
+
+                    history.push('/dashboard');
+                }
+            });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const user = { ...formValues };
 
-        console.log(e);
-        // setUser(user);
-        // dispatch(login(user));
-
-        // history.push('/dashboard');
+        setError(null);
+        loginRequest(user);
     };
 
     return (
@@ -34,19 +51,20 @@ let LoginForm = (props) => {
                     name="email"
                     type="email"
                     fullWidth
-                    label='Enter your Email'
+                    label="Enter your Email"
                 />
                 <Field
                     component={Input}
                     name="password"
                     type="password"
                     fullWidth
-                    label='Enter password'
+                    label="Enter password"
                 />
+                {error ? <p className="error">{error}</p> : null}
                 <div className="form-btn">
                     <Button
                         disabled={invalid|| submitting || pristine}
-                        type="submit" variant="contained" color='secondary'>
+                        type="submit" variant="contained" color="secondary">
                             Login
                     </Button>
                 </div>
@@ -59,26 +77,18 @@ const validate = (_values) => {
     const values = trim(_values);
     const errors = {};
 
+    const EMAIL_PATTERN = new RegExp('^[-!#$%&\'*+\\/0-9=?A-Z^_a-z{|}~](\\.?[-!#$%&\'*+\\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-?\\.?[a-zA-Z0-9])*\\.[a-zA-Z](-?[a-zA-Z0-9])+$');
+
     if (!values.email) {
         errors.email = 'E-mail field cannot be blank';
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+    } else if (!EMAIL_PATTERN.test(values.email)) {
         errors.email = 'E-mail is incorrect';
     }
 
     if (!values.password) {
         errors.password = 'Password field cannot be blank';
-    } else if (values.password.length < 6) {
+    } else if (values.password.length < 8) {
         errors.password = 'Password should contain at least 6 characters';
-    }
-
-    if (!values.passwordConfirm) {
-        errors.passwordConfirm = 'Confirm your password';
-    } else if (values.passwordConfirm.length < 6) {
-        errors.passwordConfirm = 'Confirm your password correctly';
-    }
-
-    if (values.passwordConfirm && values.password && values.passwordConfirm !== values.password) {
-        errors.passwordConfirm = 'Confirm your password correctly';
     }
 
     return errors;

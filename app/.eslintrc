@@ -16,6 +16,6 @@
     ],
     "object-curly-spacing": ["error", "always"],
     "require-jsdoc": 0,
-    "max-len": ["error", 140]
+    "max-len": ["error", 140, { "ignoreUrls": true }, { "ignoreStrings": true }]
   }
 }

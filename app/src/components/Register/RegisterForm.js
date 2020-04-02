@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { connect, useSelector, useDispatch } from 'react-redux';
@@ -7,10 +7,11 @@ import { Field, reduxForm, getFormValues } from 'redux-form';
 import setUser from '../../utils/setUser';
 import * as api from '../../utils/apiRequest';
 import trim from '../../utils/trim';
-import Input from '../common/Input';
-import RadioButtons from '../common/Radio';
 import { registerUser } from '../../store/actions';
 import { USER_ROLE } from '../../constants';
+
+import Input from '../common/Input';
+import RadioButtons from '../common/Radio';
 
 let RegisterForm = (props) => {
     const { invalid, submitting, pristine } = props;
@@ -20,11 +21,10 @@ let RegisterForm = (props) => {
     const [errors, setErrors] = useState(null);
     const [message, setMessage] = useState('');
 
-    const asyncAuth = (user) => {
+    const registerRequest = (user) => {
         api.request('/register', 'POST', user)
             .then((res) => {
                 if (res.status !== '200') {
-                    console.log('middle res', res);
                     setErrors(true);
                 } else {
                     setErrors(false);
@@ -38,6 +38,7 @@ let RegisterForm = (props) => {
                 } else {
                     setUser(res.user);
                     dispatch(registerUser(res.user));
+
                     history.push('/dashboard');
                 }
             });
@@ -50,7 +51,7 @@ let RegisterForm = (props) => {
         const user = { ...formValues };
 
         setErrors(null);
-        asyncAuth(user);
+        registerRequest(user);
     };
 
     const roleOptions = [
