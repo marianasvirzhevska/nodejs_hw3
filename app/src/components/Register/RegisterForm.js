@@ -1,77 +1,90 @@
-import React from 'react';
-import { Field, reduxForm } from 'redux-form';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+import { connect, useSelector, useDispatch } from 'react-redux';
+import { Field, reduxForm, getFormValues } from 'redux-form';
 
 import setUser from '../../utils/setUser';
+import * as api from '../../utils/apiRequest';
 import trim from '../../utils/trim';
-import useRegisterForm from './useRegister';
 import Input from '../common/Input';
-import CustomRadio from '../common/Radio';
+import RadioButtons from '../common/Radio';
 import { registerUser } from '../../store/actions';
 import { USER_ROLE } from '../../constants';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 let RegisterForm = (props) => {
     const { invalid, submitting, pristine } = props;
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const register = (formData) => {
-        const user = { ...formData };
+    const [errors, setErrors] = useState(null);
+    const [message, setMessage] = useState('');
 
-        console.log('user', user);
+    const asyncAuth = (user) => {
+        api.request('/register', 'POST', user)
+            .then((res) => {
+                if (res.status !== '200') {
+                    console.log('middle res', res);
+                    setErrors(true);
+                } else {
+                    setErrors(false);
+                }
 
-        // setUser(user);
-        // dispatch(registerUser(user));
-        // history.push('/dashboard');
+                return res.json();
+            })
+            .then((res) => {
+                if (errors) {
+                    setMessage(res.status);
+                } else {
+                    setUser(res.user);
+                    dispatch(registerUser(res.user));
+                    history.push('/dashboard');
+                }
+            });
     };
 
-    const { inputs, handleInput, handleSubmit } = useRegisterForm(register);
+    const formValues = useSelector((state) => getFormValues('register')(state));
+
+    const register = (e) => {
+        e.preventDefault();
+        const user = { ...formValues };
+
+        setErrors(null);
+        asyncAuth(user);
+    };
+
+    const roleOptions = [
+        {
+            id: 'role-shipper',
+            label: 'Shipper',
+            value: `${ USER_ROLE.SHIPPER }`,
+        },
+        {
+            id: 'role-driver',
+            label: 'Driver',
+            value: `${ USER_ROLE.DRIVER }`,
+        },
+    ];
 
     return (
         <div className="form-control">
-            <form className="auth-form register" onSubmit={handleSubmit}>
+            <form className="auth-form register" onSubmit={register}>
                 <div className="form-row">
-                    {/* <Field
-                        component={CustomRadio}
-                        name="role"
-                        label='Shipper'
-                        props={{ value: '123' }}
-                        onChange={handleInput}
-                    /> */}
-                    <Field name="sex" component={RadioGroup} onChange={handleInput}>
-                        <FormControlLabel value="female" control={<Radio />} label="Female" />
-                        <FormControlLabel value="male" control={<Radio />} label="Male" />
-                    </Field>
-                    {/* <Field
-                        component={CustomRadio}
-                        name="role"
-                        label='Driver'
-                        props={{ value: '222' }}
-                        onChange={handleInput}
-                    /> */}
+                    <RadioButtons name="role" options={roleOptions}/>
                 </div>
                 <Field
                     component={Input}
                     name="email"
                     fullWidth
                     type="email"
-                    placeholder='Email'
-                    onChange={handleInput}
-                    value={inputs.email}
+                    placeholder="Email"
                 />
                 <Field
                     component={Input}
                     name="phone"
                     fullWidth
                     type="text"
-                    placeholder='Phone'
-                    onChange={handleInput}
-                    value={inputs.phone}
+                    placeholder="Phone"
                 />
                 <div className="form-row">
                     <Field
@@ -79,18 +92,14 @@ let RegisterForm = (props) => {
                         name="firstName"
                         fullWidth
                         type="text"
-                        placeholder='First name'
-                        onChange={handleInput}
-                        value={inputs.firstName}
+                        placeholder="First name"
                     />
                     <Field
                         component={Input}
                         name="lastName"
                         fullWidth
                         type="text"
-                        placeholder='Last name'
-                        onChange={handleInput}
-                        value={inputs.lastName}
+                        placeholder="Last name"
                     />
                 </div>
                 <div className="form-row">
@@ -99,22 +108,21 @@ let RegisterForm = (props) => {
                         name="password"
                         fullWidth
                         type="password"
-                        placeholder='Password'
-                        onChange={handleInput} value={inputs.password}
+                        placeholder="Enter password"
                     />
                     <Field
                         component={Input}
-                        name="passwordConfirm"
+                        name="password_repeat"
                         fullWidth
-                        type='password'
-                        placeholder='Repeat password'
-                        onChange={handleInput} value={inputs.passwordConfirm}
+                        type="password"
+                        placeholder="Repeat password"
                     />
                 </div>
+                {errors ? <p className="error">{message}</p> : null}
                 <div className="form-btn">
                     <Button
                         disabled={invalid|| submitting || pristine}
-                        type="submit" variant="contained" color='secondary'>
+                        type="submit" variant="contained" color="secondary">
                         Register
                     </Button>
                 </div>
@@ -126,6 +134,9 @@ let RegisterForm = (props) => {
 const validate = (_values) => {
     const values = trim(_values);
     const errors = {};
+
+    const EMAIL_PATTERN = new RegExp('^[-!#$%&\'*+\\/0-9=?A-Z^_a-z{|}~](\\.?[-!#$%&\'*+\\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-?\\.?[a-zA-Z0-9])*\\.[a-zA-Z](-?[a-zA-Z0-9])+$');
+    const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
     if (!values.phone) {
         errors.phone = 'Phone field cannot be blank';
@@ -140,29 +151,31 @@ const validate = (_values) => {
     }
     if (!values.email) {
         errors.email = 'E-mail field cannot be blank';
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+    } else if (!EMAIL_PATTERN.test(values.email)) {
         errors.email = 'E-mail is incorrect';
     }
 
     if (!values.password) {
         errors.password = 'Password field cannot be blank';
-    } else if (values.password.length < 6) {
-        errors.password = 'Password should contain at least 6 characters';
+    } else if (values.password.length < 8) {
+        errors.password = 'Password should contain at least 8 characters';
+    } else if (!PASSWORD_PATTERN.test(values.password)) {
+        errors.password = 'Password should contain at least one letter and one number';
     }
 
-    if (!values.passwordConfirm) {
-        errors.passwordConfirm = 'Confirm your password correctly';
-    } else if (values.passwordConfirm.length < 6) {
-        errors.passwordConfirm = 'Confirm your password correctly';
+    if (!values.password_repeat) {
+        errors.password_repeat = 'Confirm your password correctly';
+    } else if (values.password_repeat.length < 8) {
+        errors.password_repeat = 'Confirm your password correctly';
     }
 
-    if (values.passwordConfirm && values.password && values.passwordConfirm !== values.password) {
-        errors.passwordConfirm = 'Confirm your password correctly';
+    if (values.password_repeat && values.password && values.password_repeat !== values.password) {
+        errors.password_repeat = 'Confirm your password correctly';
     }
 
-    // if (!values.role) {
-    //     errors.role = 'Choose user role.';
-    // }
+    if (!values.role) {
+        errors.role = 'Choose user role.';
+    }
 
     return errors;
 };
@@ -173,4 +186,6 @@ RegisterForm = reduxForm({
 })(RegisterForm);
 
 
-export default RegisterForm;
+export default connect((state) => ({
+    values: getFormValues('register')(state),
+}))(RegisterForm);

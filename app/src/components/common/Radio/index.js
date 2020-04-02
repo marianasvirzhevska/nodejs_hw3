@@ -1,22 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Field } from 'redux-form';
 import styles from './Radio.module.sass';
 
-const CustomRadio = ({ label, input, meta: { touched, error } }) => {
+const CustomRadio = ({ name, options }) => {
     return (
         <div className={styles.root}>
-            <div className={styles.group}>
-                <input type="radio" className={styles.hidden} id={label} {...input}/>
-                <span className={styles.radio}/>
-                <label htmlFor={label}>{label}</label>
-            </div>
-            {touched && ((error && <div className={styles.error}>{error}</div>))}
+            <Field
+                component={({ input, options }) => (
+                    options.map((option) => <div key={option.id} className={styles.group}>
+                        <input
+                            id={option.id}
+                            type='radio'
+                            {...input}
+                            className={styles.hidden}
+                            value={option.value}
+                            checked={option.value === input.value}
+                        />
+                        <span className={styles.radio}/>
+                        <label htmlFor={option.id}>{option.label}</label>
+                    </div>)
+                )}
+                name={name}
+                options={options}
+            />
         </div>
     );
 };
 
 CustomRadio.propTypes = {
-    label: PropTypes.any,
+    options: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        label: PropTypes.string.isRequired,
+        value: PropTypes.string.isRequired,
+    })),
+    name: PropTypes.string.isRequired,
 };
 
 export default CustomRadio;

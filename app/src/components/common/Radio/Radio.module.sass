@@ -3,14 +3,19 @@
 
 .root
   width: 100%
+  margin: 0 !important
+  @include flex
+    
 
 .group
   position: relative
   display: flex
   align-items: center
   margin: 15px 0
+  flex: 0 0.5 50%
 
 .group label
+  line-height: 22px
   padding-left: 30px
   position: relative
   color: $black
