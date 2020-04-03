@@ -18,7 +18,7 @@ router.post('/register', (req, res) => {
 
     if (error) {
         const errors = error.details;
-        res.json(errors);
+        res.status(403).json(errors);
         return;
     }
 
@@ -28,7 +28,7 @@ router.post('/register', (req, res) => {
     findUser({ email })
         .then((user) => {
             if (user.length) {
-                errorHandler('Email address already in use', res, null, 401);
+                errorHandler('Email address already in use', res, null, 403);
                 return;
             }
 

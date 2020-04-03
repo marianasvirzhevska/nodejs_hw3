@@ -1,6 +1,28 @@
 @import "~normalize.css"
 @import "./variables"
+@import "./mixins"
+@import "./app"
+@import "./auth"
 
-
-body
+html, body
   font-family: $font-family
+  font-weight: normal
+  font-size: $mainFont
+
+input[type="text"]::placeholder, input[type="password"]::placeholder, input[type="search"]::placeholder, input[type="tel"]::placeholder
+  color: $lightGreyFont
+  font-size: $tableFont
+
+input, textarea
+  &::-webkit-input-placeholder /* Chrome/Opera/Safari */
+   color: $lightGreyFont
+   font-size: $tableFont
+  &::-moz-placeholder /* Firefox 19+ */
+    color: $lightGreyFont
+    font-size: $tableFont
+  &:-ms-input-placeholder /* IE 10+ */
+    color: $lightGreyFont
+    font-size: $tableFont
+  &:-moz-placeholder /* Firefox 18- */
+    color: $lightGreyFont
+    font-size: $tableFont
