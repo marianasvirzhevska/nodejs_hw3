@@ -16,45 +16,52 @@ const validateDriver = require('../api/validateDriver');
 
 router.post('/truck', (req, res) => {
     const user = req.user;
-    const { valid, permition } = validateDriver(user, res);
+    const isValid = validateDriver(user, res);
 
-    if (valid && permition) {
-        const { id } = user;
-        const { type, name } = req.body;
+    if (isValid) {
+        findUserById(user.id)
+            .then((dbDriver) => {
+                const { assigned_load: assignedLoad } = dbDriver;
 
-        const truck = {
-            created_by: id,
-            type,
-            name,
-        };
+                if (!assignedLoad) {
+                    const { id } = user;
+                    const { type, name } = req.body;
 
-        const { value, error } = truckValidateSchema.validate(truck);
+                    const truck = {
+                        created_by: id,
+                        type,
+                        name,
+                    };
 
-        if (error) {
-            const errors = error.details;
-            errorHandler(errors, res, errors);
-            return;
-        }
+                    const { value, error } = truckValidateSchema.validate(truck);
 
-        const dbTruck = new TruckModel(value);
+                    if (error) {
+                        const errors = error.details;
+                        errorHandler(errors, res, errors);
+                        return;
+                    }
 
-        dbTruck.save((err) => {
-            if (err) {
-                errorHandler('Error occurred. Try again later', res, err);
-                throw err;
-            } else {
-                res.json({ status: 'Truck successfully created', dbTruck });
-                res.end();
-            }
-        });
+                    const dbTruck = new TruckModel(value);
+
+                    dbTruck.save((err) => {
+                        if (err) {
+                            errorHandler('Error occurred. Try again later', res, err);
+                            throw err;
+                        } else {
+                            res.json({ status: 'Truck successfully created', dbTruck });
+                            res.end();
+                        }
+                    });
+                }
+            });
     }
 });
 
 router.get('/truck', (req, res) => {
     const user = req.user;
-    const { valid } = validateDriver(user, res);
+    const isValid = validateDriver(user, res);
 
-    if (valid) {
+    if (isValid) {
         findTruck({ created_by: user.id })
             .then((trucks) => {
                 if (!trucks.length) {
@@ -71,29 +78,36 @@ router.get('/truck', (req, res) => {
 
 router.put('/truck', (req, res) => {
     const user = req.user;
-    const { valid, permition } = validateDriver(user, res);
+    const isValid = validateDriver(user, res);
 
-    if (valid && permition) {
-        const truck = req.body;
-        const { value, error } = truckUpdateSchema.validate(truck);
+    if (isValid) {
+        findUserById(user.id)
+            .then((dbDriver) => {
+                const { assigned_load: assignedLoad } = dbDriver;
 
-        findTruckById(truck._id)
-            .then((dbTruck) => {
-                if (dbTruck.assigned_to) {
-                    errorHandler('Truck editing not permitted.', res);
-                } else {
-                    updateTruck(truck._id, value)
-                        .then(() => {
-                            res.json({ status: 'Truck profile edited.' });
-                            res.end();
+                if (!assignedLoad) {
+                    const truck = req.body;
+                    const { value, error } = truckUpdateSchema.validate(truck);
+
+                    findTruckById(truck._id)
+                        .then((dbTruck) => {
+                            if (dbTruck.assigned_to) {
+                                errorHandler('Truck editing not permitted.', res);
+                            } else {
+                                updateTruck(truck._id, value)
+                                    .then(() => {
+                                        res.json({ status: 'Truck profile edited.' });
+                                        res.end();
+                                    })
+                                    .catch((err) => {
+                                        errorHandler('Error. Try again later.', res, err);
+                                    });
+                            }
                         })
                         .catch((err) => {
-                            errorHandler('Error. Try again later.', res, err);
+                            errorHandler('Truck not found.', res, err);
                         });
                 }
-            })
-            .catch((err) => {
-                errorHandler('Truck not found.', res);
             });
     }
 });
@@ -101,19 +115,26 @@ router.put('/truck', (req, res) => {
 router.patch('/truck', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
-    const { valid, permition } = validateDriver(user, res);
+    const isValid = validateDriver(user, res);
 
-    if (valid && permition) {
-        assignTruckTo(_id, user.id)
-            .then(() => {
-                unassignUserTrucksExceptOne(_id, user.id)
-                    .then(() => {
-                        res.json({ status: 'Truck assigned.' });
-                        res.end();
-                    });
-            })
-            .catch((err) => {
-                errorHandler('Error. Try again later.', res, err);
+    if (isValid) {
+        findUserById(user.id)
+            .then((dbDriver) => {
+                const { assigned_load: assignedLoad } = dbDriver;
+
+                if (!assignedLoad) {
+                    assignTruckTo(_id, user.id)
+                        .then(() => {
+                            unassignUserTrucksExceptOne(_id, user.id)
+                                .then(() => {
+                                    res.json({ status: 'Truck assigned.' });
+                                    res.end();
+                                });
+                        })
+                        .catch((err) => {
+                            errorHandler('Error. Try again later.', res, err);
+                        });
+                }
             });
     }
 });
@@ -121,23 +142,30 @@ router.patch('/truck', (req, res) => {
 router.delete('/truck', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
-    const { valid, permition } = validateDriver(user, res);
+    const isValid = validateDriver(user, res);
 
-    if (valid && permition) {
-        findTruckById(_id)
-            .then((dbTruck) => {
-                if (dbTruck.assigned_to) {
-                    errorHandler('Deleting forbiden.', res, err);
-                } else {
-                    deleteTruck(_id)
-                        .then(() => {
-                            res.json({ status: 'Truck deleted.' });
-                            res.end();
+    if (isValid) {
+        findUserById(user.id)
+            .then((dbDriver) => {
+                const { assigned_load: assignedLoad } = dbDriver;
+
+                if (!assignedLoad) {
+                    findTruckById(_id)
+                        .then((dbTruck) => {
+                            if (dbTruck.assigned_to) {
+                                errorHandler('Deleting forbidden.', res, err);
+                            } else {
+                                deleteTruck(_id)
+                                    .then(() => {
+                                        res.json({ status: 'Truck deleted.' });
+                                        res.end();
+                                    });
+                            }
+                        })
+                        .catch((err) => {
+                            errorHandler('Truck not found.', res, err);
                         });
                 }
-            })
-            .catch((err) => {
-                errorHandler('Truck not found.', res, err);
             });
     }
 });

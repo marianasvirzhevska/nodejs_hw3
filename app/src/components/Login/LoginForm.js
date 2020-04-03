@@ -30,7 +30,7 @@ let LoginForm = (props) => {
                     setUser(res.user);
                     dispatch(login(res.user));
 
-                    history.push('/dashboard');
+                    history.push('/profile');
                 }
             });
     };

@@ -59,13 +59,13 @@ function findTruck(loadId, res) {
 
                         updateUser(smalestValidTruck[0].assigned_to, updateDriverQuery)
                             .then(() => {
-                                console.log('Load successfuly assigned to user.');
+                                console.log('Load successfully assigned to user.');
                             })
                             .catch((err) => errorHandler('Server error.', res, err));
 
                         updateTruck(smalestValidTruck[0]._id, updateTruckQuery)
                             .then(() => {
-                                console.log('Truck successfuly updated.');
+                                console.log('Truck successfully updated.');
                             })
                             .catch((err) => errorHandler('Server error.', res, err));
                     } else {

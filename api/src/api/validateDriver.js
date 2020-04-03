@@ -5,24 +5,17 @@ const errorHandler = require('../api/errorHandler');
 const { USER_ROLE } = require('../constants');
 
 function validateDriver(user, res) {
-    let valid;
-    let permition;
-
     if (!user) {
-        valid = false;
-
         errorHandler('Invalid user token.', res, null, 403);
-        return;
+        return false;
     }
-
-    const { role, id } = user;
 
     if (role !== USER_ROLE.DRIVER) {
-        valid = false;
-
         errorHandler('Action not permitted.', res, null, 403);
-        return;
+        return false;
     }
+
+    return true;
 
     findUserById(id)
         .then((dbDriver) => {
@@ -43,6 +36,7 @@ function validateDriver(user, res) {
         valid,
         permition,
     };
-}
+};
+
 
 module.exports = validateDriver;

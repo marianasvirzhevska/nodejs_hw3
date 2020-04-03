@@ -10,7 +10,7 @@ import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
 import Login from './components/Login';
 import Register from './components/Register';
-import Dashboard from './components/Dashboard';
+import Profile from './components/Profile';
 import NotFound from './components/NotFound';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
             <Switch>
                 <PublicRoute restricted={true} component={Login} path="/" exact />
                 <PublicRoute restricted={true} component={Register} path="/register" exact />
-                <PrivateRoute component={Dashboard} path="/dashboard" exact />
+                <PrivateRoute component={Profile} path="/profile" exact />
                 <Route path="*" component={NotFound}/>
             </Switch>
         </Router>

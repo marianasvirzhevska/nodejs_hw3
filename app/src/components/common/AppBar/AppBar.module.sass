@@ -1,0 +1,30 @@
+@import '../../../styles/variables'
+@import '../../../styles/mixins'
+
+.appBar
+    width: 100%
+    min-height: 36px
+    padding: 10px 0
+    display: flex
+    align-items: center
+    flex-direction: row
+    background: $blueBg
+    position: relative
+    z-index: 1
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14)
+
+.title
+    width: 100%
+    margin: 0
+    text-align: center
+    font-size: $titleFont
+    font-weight: 500
+    color: $white
+    @media (min-width: 768px)
+        font-size: $middleFont
+
+    .subtitle
+      font-size: $middleFont
+      color: white
+      display: block
+      margin-top: -3
