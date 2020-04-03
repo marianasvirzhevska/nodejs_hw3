@@ -18,23 +18,14 @@ let RegisterForm = (props) => {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    const [errors, setErrors] = useState(null);
-    const [message, setMessage] = useState('');
+    const [error, setError] = useState(null);
 
     const registerRequest = (user) => {
         api.request('/register', 'POST', user)
+            .then((res) => res.json())
             .then((res) => {
-                if (res.status !== '200') {
-                    setErrors(true);
-                } else {
-                    setErrors(false);
-                }
-
-                return res.json();
-            })
-            .then((res) => {
-                if (errors) {
-                    setMessage(res.status);
+                if (!res.user) {
+                    setError(res.status);
                 } else {
                     setUser(res.user);
                     dispatch(registerUser(res.user));
@@ -50,7 +41,7 @@ let RegisterForm = (props) => {
         e.preventDefault();
         const user = { ...formValues };
 
-        setErrors(null);
+        setError(null);
         registerRequest(user);
     };
 
@@ -119,7 +110,7 @@ let RegisterForm = (props) => {
                         placeholder="Repeat password"
                     />
                 </div>
-                {errors ? <p className="error">{message}</p> : null}
+                {error ? <p className="error">{error}</p> : null}
                 <div className="form-btn">
                     <Button
                         disabled={invalid|| submitting || pristine}
