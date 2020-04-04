@@ -12,6 +12,7 @@ let ChangePassword = (props) => {
     const { invalid, submitting, pristine, handleCancel } = props;
     const [error, setError] = useState(false);
     const [message, setMessage] = useState(null);
+    const [submitted, setSubmitted] = useState(false);
 
     const formValues = useSelector((state) => getFormValues('change-pass')(state));
 
@@ -42,6 +43,7 @@ let ChangePassword = (props) => {
         e.preventDefault();
         const query = { ...formValues };
 
+        setSubmitted(true);
         changePWRequest(query);
     };
 
@@ -67,7 +69,7 @@ let ChangePassword = (props) => {
                 {!error && message ? <p className="response">{message}</p> : null}
                 <div className="form-actions">
                     {
-                        !error && !message || error && message ?
+                        !submitted || error ?
                             <>
                                 <Button
                                     disabled={invalid|| submitting || pristine}
@@ -84,15 +86,13 @@ let ChangePassword = (props) => {
                                     Cancel
                                 </Button>
                             </> :
-                            !error && message ?
-                                <Button
-                                    size="small"
-                                    variant="outlined"
-                                    color="primary"
-                                    onClick={handleCancel}>
-                                    Ok
-                                </Button> :
-                                null
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                color="primary"
+                                onClick={handleCancel}>
+                                Ok
+                            </Button>
                     }
                 </div>
             </form>

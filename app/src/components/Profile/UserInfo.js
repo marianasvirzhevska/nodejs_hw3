@@ -45,12 +45,13 @@ const UserInfo = ({ user }) => {
             }
             <div className="info--row info--center">
                 {
-                    newPasForm ?
+                    newPasForm && !user.assigned_load ?
                         <ChangePWForm user={user} handleCancel={handleEdit} /> :
                         <Button
                             variant="outlined"
                             color="primary"
                             size="small"
+                            disabled={Boolean(user.assigned_load)}
                             onClick={handleEdit}
                         >Change password</Button>
                 }

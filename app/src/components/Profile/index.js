@@ -5,11 +5,13 @@ import * as api from '../../utils/apiRequest';
 
 import AppBar from '../common/AppBar';
 import UserInfo from './UserInfo';
+import EditUserDialog from './EditUserDialog';
 
 const Profile = () => {
     const [user, setUser] = useState(null);
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(null);
+    const [editDialog, setEditDialog] = useState(false);
 
     async function fetchData() {
         const res = await api.requestWithToken('/profile', 'GET');
@@ -27,7 +29,7 @@ const Profile = () => {
     }, []);
 
     const handleEdit = () => {
-        console.log('edit user');
+        setEditDialog(!editDialog);
     };
 
 
@@ -41,12 +43,16 @@ const Profile = () => {
                     <div className="paper">
                         <div className="title-row">
                             <h1 className="title">User Info</h1>
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                size="small"
-                                onClick={handleEdit}
-                            >Edit Profile</Button>
+                            {
+                                loaded && !user.assigned_load ?
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        size="small"
+                                        onClick={handleEdit}
+                                    >Edit Profile</Button> :
+                                    null
+                            }
                         </div>
                         {
                             loaded ?
@@ -57,6 +63,11 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+            <EditUserDialog
+                user={user}
+                open={editDialog}
+                handleClose={handleEdit}
+            />
         </div>
     );
 };

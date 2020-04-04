@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './Input.module.sass';
 
-const Input = ({ input, label, type, placeholder, multiLine, rows, meta: { touched, error } }) => {
+const Input = ({ input, label, type, placeholder, multiLine, rows, disabled, meta: { touched, error } }) => {
     return (
         <div className={styles.root}>
             <label>
@@ -11,9 +11,13 @@ const Input = ({ input, label, type, placeholder, multiLine, rows, meta: { touch
                     {
                         multiLine ?
                             <textarea {...input} rows={rows} placeholder={placeholder}/> :
-                            <input
-                                {...input} placeholder={placeholder} type={type}
-                            />
+                            disabled ?
+                                <input
+                                    {...input} placeholder={placeholder} type={type} disabled
+                                /> :
+                                <input
+                                    {...input} placeholder={placeholder} type={type}
+                                />
                     }
                 </div>
                 {touched && ((error && <div className={styles.error}>{error}</div>))}
@@ -28,6 +32,7 @@ Input.propTypes = {
     placeholder: PropTypes.string,
     multiLine: PropTypes.bool,
     rows: PropTypes.string,
+    disabled: PropTypes.bool,
 };
 
 export default Input;
