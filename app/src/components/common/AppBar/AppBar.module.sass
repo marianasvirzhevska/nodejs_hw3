@@ -3,15 +3,17 @@
 
 .appBar
     width: 100%
-    min-height: 36px
     padding: 10px 0
+    background: $blueBg
+    z-index: 1
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14)
+
+.appContainer
+    min-height: 36px
     display: flex
     align-items: center
     flex-direction: row
-    background: $blueBg
     position: relative
-    z-index: 1
-    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14)
 
 .title
     width: 100%
@@ -28,3 +30,13 @@
       color: white
       display: block
       margin-top: -3
+
+.logoutBtn
+    position: absolute
+    right: 0
+    button
+        color: $white
+        border-color: $white
+        &:hover
+            border-color: $white
+            background: rgba(255,255,255, 0.1)
