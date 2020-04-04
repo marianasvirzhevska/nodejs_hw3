@@ -5,18 +5,18 @@ import { connect, useSelector, useDispatch } from 'react-redux';
 
 import Input from '../../common/Input';
 import trim from '../../../utils/trim';
-import { editUser } from '../../../store/actions';
+import { createLoad } from '../../../store/actions';
 import * as api from '../../../utils/apiRequest';
 
-let Form = ({ invalid, submitting, handleClose, user }) => {
+let Form = ({ invalid, submitting, handleClose, load }) => {
     const dispatch = useDispatch();
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
 
-    const formValues = useSelector((state) => getFormValues('editUser')(state));
+    const formValues = useSelector((state) => getFormValues('editLoad')(state));
 
-    const editRequest = (user) => {
-        api.request('/profile', 'PUT', user)
+    const createRequest = (load) => {
+        api.requestWithToken('/loads', 'PUT', load)
             .then((res) => {
                 if (res.status !== 200) {
                     setError(true);
@@ -29,7 +29,7 @@ let Form = ({ invalid, submitting, handleClose, user }) => {
                 if (error) {
                     setMessage(res.status);
                 } else {
-                    dispatch(editUser(user));
+                    dispatch(createLoad(res.body));
                     handleClose();
                 }
             })
@@ -41,60 +41,71 @@ let Form = ({ invalid, submitting, handleClose, user }) => {
 
     const handleCreate = (e) => {
         e.preventDefault();
-        const _user = { ...user, ...formValues };
+        const _load = {
+            _id: load._id,
+            name: formValues.name,
+            payload: formValues.payload,
+            dimensions: {
+                width: formValues.width,
+                height: formValues.height,
+                length: formValues.length,
+            },
+        };
 
-        editRequest(_user);
-        // handleClose();
+        createRequest(_load);
     };
 
     return (
         <form className="dialog-form" onSubmit={handleCreate}>
             <div className="flexed-row">
+                <Field component={Input}
+                    name="name"
+                    type="text"
+                    label="Load name:"
+                    placeholder="Please enter"
+                />
+            </div>
+            <div className="flexed-row">
                 <div className="half-column">
                     <Field component={Input}
-                        name="firstName"
-                        type="text"
-                        label="User First name"
+                        name="width"
+                        type="number"
+                        label="Width: cm"
                         placeholder="Please enter"
                     />
                 </div>
                 <div className="half-column">
                     <Field component={Input}
-                        type="text"
-                        name="lastName"
-                        label="User Last name"
+                        name="height"
+                        type="number"
+                        label="Height: cm"
                         placeholder="Please enter"
                     />
                 </div>
             </div>
             <div className="flexed-row">
-                <Field component={Input}
-                    name="phone"
-                    type="text"
-                    label="User Phone"
-                />
-            </div>
-            <div className="flexed-row">
-                <Field component={Input}
-                    name="email"
-                    type="email"
-                    label="User Email"
-                    disabled={true}
-                />
-            </div>
-            <div className="flexed-row">
-                <Field component={Input}
-                    name="role"
-                    type="text"
-                    label="User Role"
-                    disabled={true}
-                />
+                <div className="half-column">
+                    <Field component={Input}
+                        name="length"
+                        type="number"
+                        label="Length: cm"
+                        placeholder="Please enter"
+                    />
+                </div>
+                <div className="half-column">
+                    <Field component={Input}
+                        name="payload"
+                        type="number"
+                        label="Payload: kg"
+                        placeholder="Please enter"
+                    />
+                </div>
             </div>
             {error ? <p className="error">{message}</p> : null}
-            <div className='dialog-action'>
+            <div className="dialog-action">
                 <Button
-                    color='secondary'
-                    variant='contained'
+                    color="secondary"
+                    variant="contained"
                     type="submit"
                     disabled={invalid|| submitting}
                 >Save</Button>
@@ -107,28 +118,44 @@ function validate(_values) {
     const values = trim(_values);
     const errors = {};
 
-    if (!values.firstName) {
-        errors.firstName='User Name field cannot be blank';
+    if (!values.name) {
+        errors.name='Load Name field cannot be blank';
     }
-    if (!values.lastName) {
-        errors.lastName='User Surname form field cannot be blank';
+    if (!values.width) {
+        errors.width='Width form field cannot be blank';
+    } else if (values.width > 700) {
+        errors.width='Width can not be bigger then 700 cm.';
     }
 
-    if (!values.phone) {
-        errors.phone = 'Phone field cannot be blank';
+    if (!values.height) {
+        errors.height = 'Height field cannot be blank';
+    } else if (values.height > 700) {
+        errors.height='Height can not be bigger then 700 cm.';
+    }
+
+    if (!values.length) {
+        errors.length = 'Length field cannot be blank';
+    } else if (values.length > 700) {
+        errors.length='Length can not be bigger then 700 cm.';
+    }
+
+    if (!values.payload) {
+        errors.payload = 'Payload field cannot be blank';
+    } else if (values.payload > 4000) {
+        errors.payload='Length can not be bigger then 4000 kg.';
     }
 
     return errors;
 }
 
 Form = reduxForm({
-    form: 'editUser',
+    form: 'editLoad',
     validate,
 })(Form);
 
 
 export default connect((state) => ({
-    values: getFormValues('editUser')(state),
+    values: getFormValues('editLoad')(state),
 }))(Form);
 
 

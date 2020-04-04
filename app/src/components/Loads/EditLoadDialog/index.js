@@ -4,14 +4,13 @@ import { AppDialog, AppDialogTitle, AppDialogContent } from '../../common/Dialog
 import Form from './Form';
 
 const AddLoadDialog = (props) => {
-    const { open, handleClose, user } = props;
-
+    const { open, handleClose, load } = props;
     const initialValues = {
-        firstName: user && user.firstName,
-        lastName: user && user.lastName,
-        phone: user && user.phone,
-        email: user && user.email,
-        role: user && user.role,
+        name: load && load.name,
+        payload: load && load.payload,
+        width: load && load.dimensions.width,
+        height: load && load.dimensions.height,
+        length: load && load.dimensions.length,
     };
 
     return (
@@ -21,10 +20,10 @@ const AddLoadDialog = (props) => {
         >
             <AppDialogTitle
                 handleClose={handleClose}
-                title='Edit Profile'/>
+                title='Create Load'/>
             <AppDialogContent>
                 <Form
-                    user={user}
+                    load={load}
                     initialValues={initialValues}
                     handleClose={handleClose}
                 />
@@ -34,7 +33,6 @@ const AddLoadDialog = (props) => {
 };
 
 AddLoadDialog.propTypes = {
-    user: PropTypes.object,
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
 };
