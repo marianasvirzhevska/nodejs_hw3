@@ -28,7 +28,7 @@ let LoginForm = (props) => {
                     setError(res.status);
                 } else {
                     setUser(res.user);
-                    dispatch(login(res.user));
+                    dispatch(login());
 
                     history.push('/profile');
                 }

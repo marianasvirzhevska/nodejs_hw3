@@ -1,21 +1,11 @@
 import {
-    REGISTER_USER,
     LOGIN_USER,
     LOGOUT,
 } from '../constants';
 
-
-export function registerUser(user) {
-    return {
-        type: REGISTER_USER,
-        payload: user,
-    };
-}
-
-export function login(user) {
+export function login() {
     return {
         type: LOGIN_USER,
-        payload: user,
     };
 }
 

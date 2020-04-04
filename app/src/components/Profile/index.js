@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-// import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import * as api from '../../utils/apiRequest';
+import { getUserInfo } from '../../store/actions';
 
 import AppBar from '../common/AppBar';
 import UserInfo from './UserInfo';
 import EditUserDialog from './EditUserDialog';
 
 const Profile = () => {
+    const dispatch = useDispatch();
+
     const [user, setUser] = useState(null);
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(null);
@@ -19,6 +22,7 @@ const Profile = () => {
             .json()
             .then((res) => {
                 setUser(res.userInfo);
+                dispatch(getUserInfo(res.userInfo));
                 setLoaded(true);
             })
             .catch((err) => setError(err));

@@ -2,23 +2,32 @@
 import {
     EDIT_USER,
     DELETE_USER,
+    GET_USER_INFO,
 } from '../constants';
 
 
-const UsersState = {
-    users: [],
+const UserState = {
+    userInfo: {},
     loaded: false,
     error: null,
 };
 
-const usersReducer = ( state = UsersState, action) => {
+const userReducer = ( state = UserState, action) => {
     switch (action.type) {
     case EDIT_USER:
-        const user = action.payload;
+        const editUser = action.payload;
 
         return {
             ...state,
-            user: { ...state.user, ...user },
+            userInfo: { ...state.userInfo, ...editUser },
+            errors: null,
+        };
+    case GET_USER_INFO:
+        const userInfo = action.payload;
+
+        return {
+            ...state,
+            userInfo: userInfo,
             errors: null,
         };
 
@@ -27,4 +36,4 @@ const usersReducer = ( state = UsersState, action) => {
     }
 };
 
-export default usersReducer;
+export default userReducer;
