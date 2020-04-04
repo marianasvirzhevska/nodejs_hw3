@@ -6,9 +6,6 @@ import { useDispatch } from 'react-redux';
 
 import theme from './muiTheme';
 import store from './store/index';
-// import setUser from './utils/setUser';
-import { login } from './store/actions';
-import getUser from './utils/getUser';
 
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
@@ -19,18 +16,6 @@ import Loads from './components/Loads';
 import NotFound from './components/NotFound';
 
 function App() {
-    const dispatch = useDispatch();
-
-    // const init = () => {
-    //     const user = getUser();
-    //     if (user) {
-    //         dispatch(login(user));
-    //     }
-    // };
-
-    // init();
-
-
     return (
         <Router>
             <Switch>

@@ -7,7 +7,6 @@ import { useHistory } from 'react-router-dom';
 import styles from './AppBar.module.sass';
 import { LOGOUT } from '../../../store/constants';
 
-
 const AppBar = ( props ) => {
     const { title } = props;
     const dispatch = useDispatch();
