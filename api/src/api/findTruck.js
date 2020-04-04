@@ -46,6 +46,8 @@ function findTruck(loadId, res) {
                             assigned_load: dbLoad._id,
                         };
 
+                        console.log(updateDriverQuery);
+
                         const updateTruckQuery = {
                             status: TRUCK_STATUS.ON_LOAD,
                         };
