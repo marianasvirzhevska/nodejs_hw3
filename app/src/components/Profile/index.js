@@ -39,13 +39,15 @@ const Profile = () => {
             <div className="container">
                 <div className="container-fluid">
                     <div className="paper">
-                        <h1 className="title">User Info</h1>
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            size="small"
-                            onClick={handleEdit}
-                        >Edit Profile</Button>
+                        <div className="title-row">
+                            <h1 className="title">User Info</h1>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                size="small"
+                                onClick={handleEdit}
+                            >Edit Profile</Button>
+                        </div>
                         {
                             loaded ?
                                 <UserInfo user={user}/> :

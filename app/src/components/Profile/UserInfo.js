@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import { USER_ROLE } from '../../constants';
+import ChangePWForm from './ChangePWForm';
 
 const UserInfo = ({ user }) => {
+    const [newPasForm, setEditPW] = useState(false);
+
     const handleEdit = () => {
-        console.log('edit');
+        setEditPW(!newPasForm);
     };
 
     return (
@@ -41,12 +44,16 @@ const UserInfo = ({ user }) => {
                     null
             }
             <div className="info--row info--center">
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    size="small"
-                    onClick={handleEdit}
-                >Change password</Button>
+                {
+                    newPasForm ?
+                        <ChangePWForm user={user} handleCancel={handleEdit} /> :
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            onClick={handleEdit}
+                        >Change password</Button>
+                }
             </div>
         </div>
     );

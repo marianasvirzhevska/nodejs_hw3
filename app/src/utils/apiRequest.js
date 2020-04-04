@@ -13,7 +13,7 @@ function withToken(httpConfig) {
         const user = JSON.parse(localStorage.getItem('user'));
         httpConfig.headers['Authorization'] = `jwt_token ${user}`;
     } catch (err) {
-        throw (err);
+        console.error(err);
     }
     return httpConfig;
 };

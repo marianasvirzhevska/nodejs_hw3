@@ -32,6 +32,10 @@ let RegisterForm = (props) => {
 
                     history.push('/profile');
                 }
+            })
+            .catch((err) => {
+                setError(err);
+                console.error(err);
             });
     };
 
