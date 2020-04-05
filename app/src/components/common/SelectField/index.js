@@ -99,14 +99,14 @@ const SelectField = (props) => {
                 {items && items.map((item, key) => {
                     return (
                         <MenuItem
-                            value={item.valueId}
+                            value={item.label}
                             key={key}
                             classes={{
                                 root: classes.itemRoot,
                                 selected: classes.itemSelected,
                             }}
                         >
-                            {item.valueLabel}
+                            {item.label}
                         </MenuItem>
                     );
                 })}

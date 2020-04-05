@@ -26,7 +26,7 @@ const {
     TRUCK_STATUS,
 } = require('../constants');
 
-router.post('/truck', (req, res) => {
+router.post('/trucks', (req, res) => {
     const user = req.user;
     const isValid = validateDriver(user, res);
 
@@ -73,7 +73,7 @@ router.post('/truck', (req, res) => {
     }
 });
 
-router.get('/truck', (req, res) => {
+router.get('/trucks', (req, res) => {
     const user = req.user;
     const isValid = validateDriver(user, res);
 
@@ -81,7 +81,7 @@ router.get('/truck', (req, res) => {
         findTruck({ created_by: user.id })
             .then((trucks) => {
                 if (!trucks.length) {
-                    errorHandler('No trucks found.', res);
+                    errorHandler('No trucks found.', res, null, 404);
                     return;
                 };
 
@@ -92,7 +92,7 @@ router.get('/truck', (req, res) => {
     }
 });
 
-router.put('/truck', (req, res) => {
+router.put('/trucks', (req, res) => {
     const user = req.user;
     const isValid = validateDriver(user, res);
 
@@ -132,7 +132,7 @@ router.put('/truck', (req, res) => {
     }
 });
 
-router.patch('/truck', (req, res) => {
+router.patch('/trucks', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
     const isValid = validateDriver(user, res);
@@ -163,7 +163,7 @@ router.patch('/truck', (req, res) => {
     }
 });
 
-router.delete('/truck', (req, res) => {
+router.delete('/trucks', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
     const isValid = validateDriver(user, res);
@@ -198,7 +198,7 @@ router.delete('/truck', (req, res) => {
     }
 });
 
-router.get('/truck/load-info', (req, res) => {
+router.get('/trucks/load-info', (req, res) => {
     const { _id, assigned_to: assignedLoadId } = req.body;
     const user = req.user;
     const isValid = validateDriver(user, res);
@@ -216,7 +216,7 @@ router.get('/truck/load-info', (req, res) => {
     }
 });
 
-router.patch('/truck/load-info', (req, res) => {
+router.patch('/trucks/load-info', (req, res) => {
     const { loadState, truckId } = req.body;
     const user = req.user;
     const isValid = validateDriver(user, res);
