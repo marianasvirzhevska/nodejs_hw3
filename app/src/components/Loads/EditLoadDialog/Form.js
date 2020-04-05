@@ -5,7 +5,7 @@ import { connect, useSelector, useDispatch } from 'react-redux';
 
 import Input from '../../common/Input';
 import trim from '../../../utils/trim';
-import { createLoad } from '../../../store/actions';
+import { editLoad } from '../../../store/actions';
 import * as api from '../../../utils/apiRequest';
 
 let Form = ({ invalid, submitting, handleClose, load }) => {
@@ -29,7 +29,7 @@ let Form = ({ invalid, submitting, handleClose, load }) => {
                 if (error) {
                     setMessage(res.status);
                 } else {
-                    dispatch(createLoad(res.body));
+                    dispatch(editLoad(load));
                     handleClose();
                 }
             })

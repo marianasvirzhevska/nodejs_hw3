@@ -29,7 +29,7 @@ let Form = ({ invalid, submitting, handleClose }) => {
                 if (error) {
                     setMessage(res.status);
                 } else {
-                    dispatch(createLoad(res.body));
+                    dispatch(createLoad(res.dbLoad));
                     handleClose();
                 }
             })

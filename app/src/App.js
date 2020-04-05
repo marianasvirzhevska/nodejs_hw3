@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import ThemeProvider from '@material-ui/styles/ThemeProvider';
 import { Provider } from 'react-redux';
-import { useDispatch } from 'react-redux';
 
 import theme from './muiTheme';
 import store from './store/index';

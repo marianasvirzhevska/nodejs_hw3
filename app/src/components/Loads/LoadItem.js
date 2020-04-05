@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
@@ -7,33 +7,25 @@ import DoneAllOutlinedIcon from '@material-ui/icons/DoneAllOutlined';
 
 import { LOAD_STATUS } from '../../constants';
 import * as api from '../../utils/apiRequest';
-// import { getServerLoads } from '../../store/actions';
+import { deleteLoad, editLoad } from '../../store/actions';
 import EditLoadDialog from './EditLoadDialog';
 
 const LoadItem = ({ load }) => {
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
     const { _id, name, payload, dimensions, status, state } = load;
 
     const [error, setError] = useState(false);
-    const [message, setMessage] = useState(null);
     const [editDialog, setEditDialog] = useState(false);
 
     const postRequest = (query) => {
         api.requestWithToken('/loads', 'PATCH', query)
+            .then((res) => res.json())
             .then((res) => {
-                if (res.status !== 200) {
-                    setError(true);
-                } else {
-                    setError(false);
-                }
-                return res.json();
-            })
-            .then((res) => {
-                if (error) {
-                    setMessage(res.status);
-                } else {
-                    setMessage(res.status);
-                }
+                const postedLoad = {
+                    ...query,
+                    status: LOAD_STATUS.POSTED,
+                };
+                dispatch(editLoad(postedLoad));
             })
             .catch((err) => {
                 setError(err);
@@ -48,20 +40,9 @@ const LoadItem = ({ load }) => {
 
     const deleteLoadRequest = (query) => {
         api.requestWithToken('/loads', 'DELETE', query)
+            .then((res) => res.json())
             .then((res) => {
-                if (res.status !== 200) {
-                    setError(true);
-                } else {
-                    setError(false);
-                }
-                return res.json();
-            })
-            .then((res) => {
-                if (error) {
-                    setMessage(res.status);
-                } else {
-                    setMessage(res.status);
-                }
+                dispatch(deleteLoad(query));
             })
             .catch((err) => {
                 setError(err);
@@ -69,32 +50,9 @@ const LoadItem = ({ load }) => {
             });
     };
 
-    const deleteLoad = () => {
+    const handleDelete = () => {
         const query = { _id };
         deleteLoadRequest(query);
-    };
-
-    const editRequest = (query) => {
-        api.requestWithToken('/loads', 'PUT', query)
-            .then((res) => {
-                if (res.status !== 200) {
-                    setError(true);
-                } else {
-                    setError(false);
-                }
-                return res.json();
-            })
-            .then((res) => {
-                if (error) {
-                    setMessage(res.status);
-                } else {
-                    setMessage(res.status);
-                }
-            })
-            .catch((err) => {
-                setError(err);
-                console.error(err);
-            });
     };
 
     const handleEdit = () => {
@@ -123,7 +81,7 @@ const LoadItem = ({ load }) => {
                         <IconButton
                             size="small"
                             aria-label="Delete"
-                            onClick={deleteLoad}
+                            onClick={handleDelete}
                         >
                             <DeleteOutlineOutlinedIcon />
                         </IconButton>
@@ -144,8 +102,7 @@ const LoadItem = ({ load }) => {
                     </div> :
                     null
             }
-            {error ? <p className="error">{message}</p> : null}
-            {!error && message ? <p className="response">{message}</p> : null}
+            {error ? <p className="error">{error}</p> : null}
             <EditLoadDialog
                 load={load}
                 open={editDialog}

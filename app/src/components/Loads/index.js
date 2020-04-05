@@ -16,7 +16,7 @@ const Loads = () => {
     const [createDialog, setCreateDialog] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(null);
-    const [loads, setLoads] = useState(storeLoads);
+    const [loads, setLoads] = useState([]);
 
     const handleCreate = () => {
         setCreateDialog(!createDialog);
@@ -27,8 +27,6 @@ const Loads = () => {
         res
             .json()
             .then((res) => {
-                setLoads(res.loads);
-                console.log('loads', loads);
                 dispatch(getServerLoads(res.loads));
                 setLoaded(true);
             })
@@ -39,9 +37,11 @@ const Loads = () => {
         fetchData();
     }, []);
 
-    const handleEdit = () => {
-        // setCreateDialog(!createDialog);
-    };
+    useEffect(() => {
+        if (storeLoads.loads.length) {
+            setLoads(storeLoads.loads);
+        }
+    }, [storeLoads]);
 
     return (
         <div className="root">
@@ -71,6 +71,7 @@ const Loads = () => {
                                     <li>Loads not found.</li>
                             }
                         </ul>
+                        {error ? <p>{error}</p> : null}
                     </div>
                 </div>
             </div>
