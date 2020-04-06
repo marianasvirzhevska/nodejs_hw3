@@ -30,8 +30,12 @@ let RegisterForm = (props) => {
                     setUser(res.user);
                     dispatch(registerUser(res.user));
 
-                    history.push('/dashboard');
+                    history.push('/profile');
                 }
+            })
+            .catch((err) => {
+                setError(err);
+                console.error(err);
             });
     };
 

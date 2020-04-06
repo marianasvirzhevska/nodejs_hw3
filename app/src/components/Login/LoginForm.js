@@ -30,8 +30,12 @@ let LoginForm = (props) => {
                     setUser(res.user);
                     dispatch(login(res.user));
 
-                    history.push('/dashboard');
+                    history.push('/profile');
                 }
+            })
+            .catch((err) => {
+                setError(err);
+                console.error(err);
             });
     };
 
@@ -88,7 +92,7 @@ const validate = (_values) => {
     if (!values.password) {
         errors.password = 'Password field cannot be blank';
     } else if (values.password.length < 8) {
-        errors.password = 'Password should contain at least 6 characters';
+        errors.password = 'Password should contain at least 8 characters';
     }
 
     return errors;

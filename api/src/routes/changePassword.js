@@ -20,13 +20,13 @@ router.put('/change-pass', (req, res) => {
         const { value, error } = userPassSchema.validate(validatePass);
 
         if (error) {
-            errorHandler('Password didn\'t mutch', res, error);
+            errorHandler('Password should contain at least one letter and one number.', res, error, 403);
             return;
         }
 
         bcrypt.hash(value.password, 10, (err, hash) => {
             if (err) {
-                errorHandler('Error occurred. Try again later', res, err);
+                errorHandler('Error occurred. Try again later.', res, err);
                 return;
             }
 

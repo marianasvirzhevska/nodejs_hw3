@@ -180,7 +180,7 @@ router.delete('/truck', (req, res) => {
                     findTruckById(_id)
                         .then((dbTruck) => {
                             if (dbTruck.assigned_to) {
-                                errorHandler('Deleting forbiden.', res, err);
+                                errorHandler('Deleting forbidden.', res, err);
                             } else {
                                 deleteTruck(_id)
                                     .then(() => {
@@ -236,7 +236,7 @@ router.patch('/truck/load-info', (req, res) => {
 
         updateLoad(user.assigned_load, updateLoadQuery, log)
             .then(() => {
-                res.json({ status: 'Ok', loadStatus: 'Load arrived to delyvery.' });
+                res.json({ status: 'Ok', loadStatus: 'Load arrived to delivery.' });
             })
             .catch((err) => errorHandler('Can not update load.', res, err));
 

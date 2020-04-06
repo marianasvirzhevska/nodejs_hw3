@@ -107,6 +107,13 @@ const theme = createMuiTheme({
                     color: colors.white,
                 },
             },
+            outlined: {
+                '&$disabled': {
+                    backgroundColor: 'transparent',
+                    borderColor: colors.lightGreyFont,
+                    color: colors.lightGreyFont,
+                },
+            },
             sizeSmall: {
                 fontSize: fontSizes.table,
                 padding: '6px 20px',
