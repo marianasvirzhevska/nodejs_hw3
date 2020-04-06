@@ -10,7 +10,6 @@ import AddLoadDialog from './AddLoadDialog';
 
 const Loads = () => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.user.userInfo);
     const storeLoads = useSelector((state) => state.loads);
 
     const [createDialog, setCreateDialog] = useState(false);
@@ -47,7 +46,9 @@ const Loads = () => {
 
     return (
         <div className="root">
-            <AppBar title="SHIPPER"/>
+            <AppBar
+                backPath="profile"
+                title="SHIPPER"/>
             <div className="container">
                 <div className="container-fluid">
                     <div className="paper">

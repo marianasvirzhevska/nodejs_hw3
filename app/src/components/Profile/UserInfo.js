@@ -37,7 +37,7 @@ const UserInfo = ({ user }) => {
                             {
                                 user.assigned_load ?
                                     <Link to={`trucks/load-info/${user.assigned_load}`}>View</Link> :
-                                    'No assigned load.'
+                                    'Load not assigned.'
                             }
                         </div>
                     </div> :

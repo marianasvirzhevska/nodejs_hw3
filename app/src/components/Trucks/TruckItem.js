@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import AssignmentIndOutlinedIcon from '@material-ui/icons/AssignmentIndOutlined';
 
-import { TRUCK_STATUS } from '../../constants';
 import * as api from '../../utils/apiRequest';
 import truckMap from '../../utils/getTruck';
 import { assignTruck, deleteTruck } from '../../store/actions';
@@ -103,11 +101,6 @@ const TruckItem = ({ truck }) => {
                             <AssignmentIndOutlinedIcon />
                         </IconButton>
                     </div> :
-                    null
-            }
-            {
-                status === TRUCK_STATUS.ON_LOAD ?
-                    <Link to={`/trucks/load-info/${user.assigned_load}`}>View Load info</Link> :
                     null
             }
             {error ? <p className="error">{error}</p> : null}

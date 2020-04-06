@@ -76,7 +76,7 @@ const LoadItem = ({ load }) => {
                 <div className="info-label">Payload: <b>{payload} kg</b></div>
             </div>
             {
-                status !== LOAD_STATUS.POSTED ?
+                status === LOAD_STATUS.NEW ?
                     <div className="item-actions">
                         <IconButton
                             size="small"

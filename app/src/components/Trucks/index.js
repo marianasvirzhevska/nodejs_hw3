@@ -47,7 +47,9 @@ const Trucks = () => {
 
     return (
         <div className="root">
-            <AppBar title="DRIVER"/>
+            <AppBar
+                backPath="profile"
+                title="DRIVER"/>
             <div className="container">
                 <div className="container-fluid">
                     <div className="paper">
@@ -66,7 +68,7 @@ const Trucks = () => {
                         </div>
                         <ul className="list">
                             {
-                                loaded && trucks && trucks.length ?
+                                loaded && trucks.length ?
                                     trucks.map((item) => {
                                         return (
                                             <TruckItem key={item._id} truck={item}/>

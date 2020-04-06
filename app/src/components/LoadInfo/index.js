@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouteMatch } from 'react-router';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 
 import * as api from '../../utils/apiRequest';
 import { LOAD_STATE } from '../../constants';
@@ -9,7 +9,7 @@ import AppBar from '../common/AppBar';
 import DeliverySteps from './DeliverySteps';
 
 const LoadInfo = () => {
-    const history = useHistory();
+    // const history = useHistory();
     const { params } = useRouteMatch();
     const _id = params.id;
 
@@ -45,7 +45,7 @@ const LoadInfo = () => {
         const updatedLoad = { ...load };
         const query = {};
 
-        for (let [key, value] of Object.entries(loadStates)) {
+        for (const [key, value] of Object.entries(loadStates)) {
             if (value.order === state.order) {
                 updatedLoad.state = key;
                 query.state = key;
@@ -53,13 +53,14 @@ const LoadInfo = () => {
         }
 
         const url = `/trucks/load-info/${_id}`;
+        console.log('backPath', query);
         api.requestWithToken(url, 'PATCH', query)
             .then((res) => res.json())
             .then((res) => {
                 setMessage(res.status);
                 // if (query.state !== LOAD_STATE.ARRIVED_TO_DELIVERY) {
-                //     setLoad(updatedLoad);
                 // }
+                setLoad(updatedLoad);
                 console.log(res.status);
             })
             .catch((err) => {
@@ -78,7 +79,9 @@ const LoadInfo = () => {
 
     return (
         <div className="root">
-            <AppBar title="DRIVER" />
+            <AppBar
+                backPath="/profile"
+                title="DRIVER" />
             <div className="container">
                 <div className="container-fluid">
                     <div className="paper">

@@ -1,7 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { userUpdateSchema, findUserById, updateUser } = require('../models/userModel');
+const {
+    userUpdateSchema,
+    findUserById,
+    updateUser,
+    deleteUser,
+} = require('../models/userModel');
 const errorHandler = require('../api/errorHandler');
+const validateShipper = require('../api/validateShipper');
 
 router.get('/profile', (req, res) => {
     const user = req.user;
@@ -22,6 +28,7 @@ router.get('/profile', (req, res) => {
                     phone: dbUser.phone,
                     assigned_load: dbUser.assigned_load,
                     assigned_truck: dbUser.assigned_truck,
+                    _id: dbUser._id,
                 };
 
                 res.json({ status: 'Ok', userInfo });
@@ -53,6 +60,27 @@ router.put('/profile', (req, res) => {
                 .catch((err) => {
                     errorHandler('Error. Try again later.', res, err);
                 });
+        }
+    }
+});
+
+router.delete('/profile', (req, res) =>{
+    const user = req.user;
+    const isValid = validateShipper(user);
+
+    if (!req.user) {
+        res.status(401).json({ status: 'Invalid user token.' });
+        res.end();
+    } else {
+        if (isValid) {
+            deleteUser(user.id)
+                .then(() => {
+                    res.json({ status: 'User profile deleted.' });
+                    res.end();
+                })
+                .catch((err) => errorHandler('Error. Try again later.', res, err));
+        } else {
+            errorHandler('User role: Driver. Profile deleting is not permitted.', res, err);
         }
     }
 });

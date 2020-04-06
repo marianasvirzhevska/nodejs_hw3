@@ -81,7 +81,7 @@ router.get('/trucks', (req, res) => {
         findTruck({ created_by: user.id })
             .then((trucks) => {
                 if (!trucks.length) {
-                    errorHandler('No trucks found.', res, null, 404);
+                    errorHandler('No trucks found.', res, null, 200);
                     return;
                 };
 

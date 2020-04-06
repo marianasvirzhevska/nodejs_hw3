@@ -76,6 +76,10 @@ function updateUser(userId, doc) {
     return UserModel.updateOne({ _id: new ObjectID(userId) }, { $set: doc });
 };
 
+function deleteUser(userId) {
+    return UserModel.deleteOne({ _id: new ObjectID(userId) });
+}
+
 module.exports = {
     UserModel,
     userUpdateSchema,
@@ -84,4 +88,5 @@ module.exports = {
     findUser,
     findUserById,
     updateUser,
+    deleteUser,
 };
