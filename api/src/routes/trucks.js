@@ -198,69 +198,80 @@ router.delete('/trucks', (req, res) => {
     }
 });
 
-router.get('/trucks/load-info', (req, res) => {
-    const { _id, assigned_to: assignedLoadId } = req.body;
+router.get('/trucks/load-info/:loadId', (req, res) => {
+    const loadId = req.params.loadId;
     const user = req.user;
     const isValid = validateDriver(user, res);
 
     if (isValid) {
-        findLoadById(assignedLoadId)
+        findLoadById(loadId)
             .then((dbLoad) => {
-                const loadInfo = { ...dbLoad };
-                delete loadInfo.logs;
-
-                res.json({ status: 'Ok', loadInfo });
+                res.json({ status: 'Ok', dbLoad });
                 res.end();
             })
             .catch((err) => errorHandler('Load not found', res, err));
     }
 });
 
-router.patch('/trucks/load-info', (req, res) => {
-    const { loadState, truckId } = req.body;
+router.patch('/trucks/load-info/:loadId', (req, res) => {
+    const loadId = req.params.loadId;
+    const { state } = req.body;
     const user = req.user;
     const isValid = validateDriver(user, res);
-    const updateLoadQuery = {
-        state: loadState,
-    };
 
-    if (loadState === LOAD_STATE.ARRIVED_TO_DELIVERY) {
+    const errors = {};
+
+    if (state === LOAD_STATE.ARRIVED_TO_DELIVERY) {
         const log = {
             message: 'Load delivered.',
             time: Date.now(),
+        };
+
+        const updateLoadQuery = {
+            state,
+            status: LOAD_STATUS.SHIPPED,
         };
 
         const updateDriverQuery = {
             assigned_load: null,
         };
 
-        updateLoad(user.assigned_load, updateLoadQuery, log)
+        const updateTruckQuery = {
+            status: TRUCK_STATUS.IN_SERVICE,
+        };
+
+        updateLoad(loadId, updateLoadQuery, log)
             .then(() => {
                 res.json({ status: 'Ok', loadStatus: 'Load arrived to delivery.' });
             })
-            .catch((err) => errorHandler('Can not update load.', res, err));
+            .catch((err) => errors.load = err);
 
-        updateTruck(truckId, updateTruckQuery)
+        updateTruck(user.assigned_to, updateTruckQuery)
             .then(() => {
                 res.json({ truckStatus: 'Truck is In Service.' });
             })
-            .catch((err) => errorHandler('Can not update truck.', res, err));
+            .catch((err) => errors.truck = err);
 
         updateUser(user._id, updateDriverQuery)
             .then(() => {
+                console.log('user._id', user._id, updateDriverQuery);
                 res.json({ driverStatus: 'Load delivered.' });
             })
-            .catch((err) => errorHandler('Can not update driver profile.', res, err));
+            .catch((err) => {
+                errors.user = err;
+                errorHandler('Can not update driver profile.', res, errors);
+            });
     } else {
+        const updateLoadQuery = { state };
         const log = {
-            message: `Load state updated to: ${loadState}`,
+            message: `Load state updated to: ${state}`,
             time: Date.now(),
         };
 
         if (isValid) {
-            updateLoad(user.assigned_load, updateLoadQuery, log)
+            updateLoad(loadId, updateLoadQuery, log)
                 .then(() => {
-                    res.json({ status: 'Load state updated.' });
+                    res.json({ status: `Load state updated to: ${state}` });
                     res.end();
                 })
                 .catch((err) => errorHandler('Load not found', res, err));

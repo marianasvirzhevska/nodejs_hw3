@@ -46,8 +46,6 @@ function findTruck(loadId, res) {
                             assigned_load: dbLoad._id,
                         };
 
-                        console.log(updateDriverQuery);
-
                         const updateTruckQuery = {
                             status: TRUCK_STATUS.ON_LOAD,
                         };
@@ -75,7 +73,12 @@ function findTruck(loadId, res) {
                             status: LOAD_STATUS.NEW,
                         };
 
-                        updateLoad(dbLoad._id, updateLoadQuery)
+                        const log = {
+                            message: 'Truck not found.',
+                            time: Date.now(),
+                        };
+
+                        updateLoad(dbLoad._id, updateLoadQuery, log)
                             .then(() => {
                                 res.json({ status: 'Truck not found. Try again latter.', updateLoadQuery });
                                 res.end();

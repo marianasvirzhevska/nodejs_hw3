@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null,
     },
+    assigned_truck: {
+        type: String,
+        default: null,
+    },
 });
 
 const UserModel = mongoose.model('User', userSchema);
@@ -33,6 +37,7 @@ const created = Joi.date().max('1-1-2050').iso();
 const role = Joi.string();
 const password = Joi.string().pattern(passPattern);
 const assignedLoad = Joi.string();
+const assignedTruck = Joi.string();
 
 const userValidateSchema = Joi.object({
     firstName: firstName.required(),
@@ -44,6 +49,7 @@ const userValidateSchema = Joi.object({
     password: password.required(),
     password_repeat: Joi.ref('password'),
     assigned_load: assignedLoad,
+    assigned_truck: assignedTruck,
 });
 
 const userUpdateSchema = Joi.object({

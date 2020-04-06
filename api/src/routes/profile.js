@@ -21,6 +21,7 @@ router.get('/profile', (req, res) => {
                     email: dbUser.email,
                     phone: dbUser.phone,
                     assigned_load: dbUser.assigned_load,
+                    assigned_truck: dbUser.assigned_truck,
                 };
 
                 res.json({ status: 'Ok', userInfo });

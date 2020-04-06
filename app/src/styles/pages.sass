@@ -131,7 +131,61 @@
 .assigned-truck
     color: #f69c01
     padding: 0 8px
+
+.load-info
+    padding: 2em 0
+    &--row
+        @include flex
+        align-items: center
+        margin: 16px 0
+    &--name 
+        flex: 0 0.8 80%
+        font-size: $titleFont
+        font-weight: 500
+    &--label
+        flex: 0 0.2 20%
+        font-size: $middleFont
+        color: $secondGreyFont
+    &--state
+        flex: 0 0.8 80%
+        font-size: $middleFont
+        color: $blueBg
+
+.load-dimensions
+     margin: 16px 0
     
+.load-label
+    font-size: $middleFont
+    color: $secondGreyFont
+    padding: 6px 0
+    b 
+        color: $black
+        padding: 0 10px
+
+
+.steps
+    margin: 2em 0
+    &--row
+        @include flex
+        justify-content: space-between
+        position: relative
+        &::before
+            content: " "
+            display: block
+            position: absolute
+            width: 100%
+            height: 1px
+            top: 20px
+            background: $borderColor
+            
+    &--item
+        flex: 0 0.25 25%
+        @include flex
+        flex-direction: column
+        align-items: center
+    &--label
+        margin: 16px 0
+        color: $secondGreyFont
 
 
 

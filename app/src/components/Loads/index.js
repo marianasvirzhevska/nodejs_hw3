@@ -27,7 +27,9 @@ const Loads = () => {
         res
             .json()
             .then((res) => {
-                dispatch(getServerLoads(res.loads));
+                if (res.loads) {
+                    dispatch(getServerLoads(res.loads));
+                }
                 setLoaded(true);
             })
             .catch((err) => setError(err));
@@ -45,9 +47,7 @@ const Loads = () => {
 
     return (
         <div className="root">
-            <AppBar
-                title={loaded ? user.role : 'Profile'}
-            />
+            <AppBar title="SHIPPER"/>
             <div className="container">
                 <div className="container-fluid">
                     <div className="paper">
@@ -62,7 +62,7 @@ const Loads = () => {
                         </div>
                         <ul className="list">
                             {
-                                loaded && loads ?
+                                loaded && loads.length ?
                                     loads.map((item, i) => {
                                         return (
                                             <LoadItem key={i} load={item}/>

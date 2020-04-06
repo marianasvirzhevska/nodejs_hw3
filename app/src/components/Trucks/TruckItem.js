@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
@@ -14,7 +14,9 @@ import EditTruckDialog from './EditTruckDialog';
 
 const TruckItem = ({ truck }) => {
     const dispatch = useDispatch();
-    const { _id, name, type, status, assigned_to: assignedTo } = truck;
+    const { _id, name, type, status, assigned_to: assignedLoad } = truck;
+
+    const user = useSelector((state) => state.user.userInfo);
 
     const [error, setError] = useState(false);
     const [editDialog, setEditDialog] = useState(false);
@@ -65,7 +67,7 @@ const TruckItem = ({ truck }) => {
         <li id={_id} className="list-item">
             <div className="item-label">{name}
                 <span className="light"> ({status})</span>
-                {assignedTo ?<span className="assigned-truck"> - Assigned</span>: null}
+                {assignedLoad ?<span className="assigned-truck"> - Assigned</span>: null}
             </div>
             <div className="item-info">
                 <div className="info-label">Type: <b>{type}</b></div>
@@ -77,7 +79,7 @@ const TruckItem = ({ truck }) => {
                 <div className="info-label">Payload: <b>{getTruckSize().payload} kg</b></div>
             </div>
             {
-                !assignedTo ?
+                !assignedLoad && !user.assigned_load ?
                     <div className="item-actions">
                         <IconButton
                             size="small"
@@ -103,7 +105,11 @@ const TruckItem = ({ truck }) => {
                     </div> :
                     null
             }
-            {/* <Link to={`trucks/load-info/${assignedTo}`}>View Load info</Link> */}
+            {
+                status === TRUCK_STATUS.ON_LOAD ?
+                    <Link to={`/trucks/load-info/${user.assigned_load}`}>View Load info</Link> :
+                    null
+            }
             {error ? <p className="error">{error}</p> : null}
             <EditTruckDialog
                 truck={truck}

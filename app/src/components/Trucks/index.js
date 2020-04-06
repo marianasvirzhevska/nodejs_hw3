@@ -27,7 +27,9 @@ const Trucks = () => {
         res
             .json()
             .then((res) => {
-                dispatch(getServerTrucks(res.trucks));
+                if (res.trucks) {
+                    dispatch(getServerTrucks(res.trucks));
+                }
                 setLoaded(true);
             })
             .catch((err) => setError(err));
@@ -45,27 +47,29 @@ const Trucks = () => {
 
     return (
         <div className="root">
-            <AppBar
-                title={loaded ? user.role : 'Profile'}
-            />
+            <AppBar title="DRIVER"/>
             <div className="container">
                 <div className="container-fluid">
                     <div className="paper">
                         <div className="title-row">
                             <h1 className="title">Trucks</h1>
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                size="small"
-                                onClick={handleCreate}
-                            >Add Truck</Button>
+                            {
+                                !user.assigned_load ?
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        size="small"
+                                        onClick={handleCreate}
+                                    >Add Truck</Button> :
+                                    null
+                            }
                         </div>
                         <ul className="list">
                             {
-                                loaded && trucks.length ?
-                                    trucks.map((item, i) => {
+                                loaded && trucks && trucks.length ?
+                                    trucks.map((item) => {
                                         return (
-                                            <TruckItem key={i} truck={item}/>
+                                            <TruckItem key={item._id} truck={item}/>
                                         );
                                     }) :
                                     <li>Trucks not found.</li>

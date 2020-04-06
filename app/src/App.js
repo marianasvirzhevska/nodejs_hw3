@@ -13,6 +13,7 @@ import Register from './components/Register';
 import Profile from './components/Profile';
 import Loads from './components/Loads';
 import Trucks from './components/Trucks';
+import LoadInfo from './components/LoadInfo';
 import NotFound from './components/NotFound';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
                 <PrivateRoute component={Profile} path="/profile" exact />
                 <PrivateRoute component={Loads} path="/loads" exact />
                 <PrivateRoute component={Trucks} path="/trucks" exact />
+                <PrivateRoute component={LoadInfo} path="/trucks/load-info/:id" exact />
                 <Route path="*" component={NotFound}/>
             </Switch>
         </Router>
