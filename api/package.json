@@ -4,7 +4,7 @@
   "description": "Server side app",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon index.js",
+    "server": "nodemon --inspect index.js",
     "prod": "node index.js",
     "dev": "concurrently --kill-others-on-fail \"yarn server\""
   },

@@ -58,13 +58,13 @@ function findTruckById(truckId) {
     return TruckModel.findById(truckId);
 };
 
-function updateTruck(truckId, doc) {
-    return TruckModel.updateOne({ _id: new ObjectID(truckId) }, { $set: doc });
-};
-
 function findTruck(query) {
     return TruckModel.find(query);
 }
+
+function updateTruck(truckId, doc) {
+    return TruckModel.updateOne({ _id: new ObjectID(truckId) }, { $set: doc });
+};
 
 function deleteTruck(truckId) {
     return TruckModel.deleteOne({ _id: new ObjectID(truckId) });

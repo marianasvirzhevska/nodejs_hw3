@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import * as api from '../../utils/apiRequest';
 import { getUserInfo } from '../../store/actions';
 import { LOGOUT } from '../../store/constants';
+import { LOAD_STATE, USER_ROLE } from '../../constants';
 
 import AppBar from '../common/AppBar';
 import UserInfo from './UserInfo';
@@ -44,7 +45,7 @@ const Profile = () => {
     };
 
     const handleOpenDelete = () => {
-        setDeleteDialog(true);
+        setDeleteDialog(!deleteDialog);
     };
 
     const deleteRequest = () => {
@@ -73,26 +74,27 @@ const Profile = () => {
                     <div className="paper">
                         <div className="title-row">
                             <h1 className="title">User Info</h1>
-                            {
-                                loaded && !user.assigned_load ?
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        size="small"
-                                        onClick={handleOpenDelete}
-                                    >Delete Account</Button> :
-                                    null
-                            }
-                            {
-                                loaded && !user.assigned_load ?
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        size="small"
-                                        onClick={handleEdit}
-                                    >Edit Profile</Button> :
-                                    null
-                            }
+                            <div>
+                                {
+                                    loaded && user.role === USER_ROLE.SHIPPER ?
+                                        <Button
+                                            size="small"
+                                            className="delete-button"
+                                            onClick={handleOpenDelete}
+                                        >Delete Account</Button> :
+                                        null
+                                }
+                                {
+                                    loaded && !user.assigned_load ?
+                                        <Button
+                                            variant="contained"
+                                            color="secondary"
+                                            size="small"
+                                            onClick={handleEdit}
+                                        >Edit Profile</Button> :
+                                        null
+                                }
+                            </div>
                         </div>
                         {
                             loaded ?

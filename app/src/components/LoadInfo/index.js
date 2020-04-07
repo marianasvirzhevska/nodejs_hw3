@@ -55,13 +55,12 @@ const LoadInfo = () => {
         const url = `/trucks/load-info/${_id}`;
         console.log('backPath', query);
         api.requestWithToken(url, 'PATCH', query)
-            .then((res) => res.json())
+            .then((res) => {
+                return res.json();
+            })
             .then((res) => {
                 setMessage(res.status);
-                // if (query.state !== LOAD_STATE.ARRIVED_TO_DELIVERY) {
-                // }
                 setLoad(updatedLoad);
-                console.log(res.status);
             })
             .catch((err) => {
                 setError(err);
