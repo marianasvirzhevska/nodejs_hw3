@@ -15,7 +15,10 @@ const logsSchema = new mongoose.Schema({
 });
 
 const loadSchema = new mongoose.Schema({
-    name: String,
+    name: {
+        type: String,
+        default: 'New Load',
+    },
     created_by: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

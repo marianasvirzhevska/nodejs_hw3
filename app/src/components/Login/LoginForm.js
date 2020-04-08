@@ -21,13 +21,13 @@ let LoginForm = (props) => {
     const formValues = useSelector((state) => getFormValues('login')(state));
 
     const loginRequest = (user) => {
-        api.request('/login', 'POST', user)
+        api.request('/api/auth/login', 'POST', user)
             .then((res) => res.json())
             .then((res) => {
-                if (!res.user) {
+                if (!res.token) {
                     setError(res.status);
                 } else {
-                    setUser(res.user);
+                    setUser(res.token);
                     dispatch(login());
 
                     history.push('/profile');
@@ -52,7 +52,7 @@ let LoginForm = (props) => {
             <form className="auth-form loginForm" onSubmit={handleSubmit}>
                 <Field
                     component={Input}
-                    name="email"
+                    name="username"
                     type="email"
                     fullWidth
                     label="Enter your Email"
@@ -83,10 +83,10 @@ const validate = (_values) => {
 
     const EMAIL_PATTERN = new RegExp('^[-!#$%&\'*+\\/0-9=?A-Z^_a-z{|}~](\\.?[-!#$%&\'*+\\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-?\\.?[a-zA-Z0-9])*\\.[a-zA-Z](-?[a-zA-Z0-9])+$');
 
-    if (!values.email) {
-        errors.email = 'E-mail field cannot be blank';
-    } else if (!EMAIL_PATTERN.test(values.email)) {
-        errors.email = 'E-mail is incorrect';
+    if (!values.username) {
+        errors.username = 'E-mail field cannot be blank';
+    } else if (!EMAIL_PATTERN.test(values.username)) {
+        errors.username = 'E-mail is incorrect';
     }
 
     if (!values.password) {

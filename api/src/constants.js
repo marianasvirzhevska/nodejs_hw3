@@ -25,8 +25,8 @@ const LOAD_STATE = {
 };
 
 const USER_ROLE = {
-    SHIPPER: 'SHIPPER',
-    DRIVER: 'DRIVER',
+    SHIPPER: 'shipper',
+    DRIVER: 'driver',
 };
 
 module.exports = {

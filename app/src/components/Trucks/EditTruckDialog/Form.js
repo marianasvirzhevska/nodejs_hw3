@@ -20,7 +20,7 @@ let Form = ({ invalid, submitting, handleClose, truck }) => {
     const formValues = useSelector((state) => getFormValues('editTruck')(state));
 
     const editRequest = (truck) => {
-        api.requestWithToken('/trucks', 'PUT', truck)
+        api.requestWithToken('/api/trucks', 'PUT', truck)
             .then((res) => {
                 if (res.status !== 200) {
                     setError(true);

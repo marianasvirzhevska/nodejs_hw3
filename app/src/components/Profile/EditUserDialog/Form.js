@@ -16,7 +16,7 @@ let Form = ({ invalid, submitting, handleClose, user }) => {
     const formValues = useSelector((state) => getFormValues('editUser')(state));
 
     const editRequest = (user) => {
-        api.requestWithToken('/profile', 'PUT', user)
+        api.requestWithToken('/api/profile', 'PUT', user)
             .then((res) => {
                 if (res.status !== 200) {
                     setError(true);

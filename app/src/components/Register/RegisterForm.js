@@ -21,13 +21,13 @@ let RegisterForm = (props) => {
     const [error, setError] = useState(null);
 
     const registerRequest = (user) => {
-        api.request('/register', 'POST', user)
+        api.request('/api/auth/register', 'POST', user)
             .then((res) => res.json())
             .then((res) => {
-                if (!res.user) {
+                if (!res.token) {
                     setError(res.status);
                 } else {
-                    setUser(res.user);
+                    setUser(res.token);
                     dispatch(login());
 
                     history.push('/profile');
@@ -43,7 +43,11 @@ let RegisterForm = (props) => {
 
     const register = (e) => {
         e.preventDefault();
-        const user = { ...formValues };
+        const user = {
+            username: formValues.email,
+            password: formValues.password,
+            role: formValues.role,
+        };
 
         setError(null);
         registerRequest(user);
@@ -134,17 +138,6 @@ const validate = (_values) => {
     const EMAIL_PATTERN = new RegExp('^[-!#$%&\'*+\\/0-9=?A-Z^_a-z{|}~](\\.?[-!#$%&\'*+\\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-?\\.?[a-zA-Z0-9])*\\.[a-zA-Z](-?[a-zA-Z0-9])+$');
     const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
-    if (!values.phone) {
-        errors.phone = 'Phone field cannot be blank';
-    }
-
-    if (!values.firstName) {
-        errors.firstName = 'First Name field cannot be blank';
-    }
-
-    if (!values.lastName) {
-        errors.lastName = 'Last Name field cannot be blank';
-    }
     if (!values.email) {
         errors.email = 'E-mail field cannot be blank';
     } else if (!EMAIL_PATTERN.test(values.email)) {

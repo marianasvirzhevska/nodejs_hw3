@@ -5,6 +5,7 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -31,6 +32,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DeliverySteps({ steps, activeStep: initialStep, changeStep }) {
     const classes = useStyles();
+    const history = useHistory();
+
     const [activeStep, setActiveStep] = useState(initialStep.order);
     const [newState, setNewState] = useState(false);
 
@@ -48,6 +51,9 @@ export default function DeliverySteps({ steps, activeStep: initialStep, changeSt
     const handleNext = (nextStep) => {
         setNewState(true);
         setActiveStep(nextStep);
+        if (activeStep === 3) {
+            history.push('/profile');
+        }
     };
 
     const handleSendState = () => {
@@ -68,7 +74,7 @@ export default function DeliverySteps({ steps, activeStep: initialStep, changeSt
             </Stepper>
             <div>
                 {activeStep === steps.length ? (
-                    <Typography className={classes.instructions}>Load delivered. 111</Typography>
+                    <Typography className={classes.instructions}>Load delivered.</Typography>
                 ) : (
                     <div className={classes.actions}>
                         <Button variant="contained" color="primary" size="small" onClick={() => handleNext(activeStep + 1)}>
