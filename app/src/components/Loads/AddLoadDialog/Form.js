@@ -29,7 +29,8 @@ let Form = ({ invalid, submitting, handleClose }) => {
                 if (error) {
                     setMessage(res.status);
                 } else {
-                    dispatch(createLoad(res.dbLoad));
+                    // previously load received from server response - See development branch
+                    dispatch(createLoad(load));
                     handleClose();
                 }
             })

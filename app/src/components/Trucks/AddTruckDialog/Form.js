@@ -7,7 +7,7 @@ import trim from '../../../utils/trim';
 import { createTruck } from '../../../store/actions';
 import * as api from '../../../utils/apiRequest';
 import truckMap from '../../../utils/getTruck';
-import { TRUCK_TYPE } from '../../../constants';
+import { TRUCK_TYPE, TRUCK_STATUS } from '../../../constants';
 
 import Input from '../../common/Input';
 import SelectField from '../../common/SelectField';
@@ -20,7 +20,7 @@ let Form = ({ invalid, submitting, handleClose }) => {
     const formValues = useSelector((state) => getFormValues('addTruck')(state));
 
     const createRequest = (truck) => {
-        api.requestWithToken('/trucks', 'POST', truck)
+        api.requestWithToken('/api/trucks', 'POST', truck)
             .then((res) => {
                 if (res.status !== 200) {
                     setError(true);
@@ -33,7 +33,14 @@ let Form = ({ invalid, submitting, handleClose }) => {
                 if (error) {
                     setMessage(res.status);
                 } else {
-                    dispatch(createTruck(res.dbTruck));
+                    const newTruck = {
+                        ...truck,
+                        name: 'Default truck',
+                        status: TRUCK_STATUS.IN_SERVICE,
+                    };
+
+                    // previously newTruck received from server response - See development branch
+                    dispatch(createTruck(newTruck));
                     handleClose();
                 }
             })
@@ -109,9 +116,6 @@ function validate(_values) {
     const values = trim(_values);
     const errors = {};
 
-    if (!values.name) {
-        errors.name='Load Name field cannot be blank.';
-    }
     if (!values.type) {
         errors.type='Select truck type.';
     }

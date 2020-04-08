@@ -15,7 +15,7 @@ let Form = ({ invalid, submitting, handleClose, load, setMessage, setSnackbar })
     const formValues = useSelector((state) => getFormValues('editLoad')(state));
 
     const createRequest = (load) => {
-        api.requestWithToken('/loads', 'PUT', load)
+        api.requestWithToken('/api/loads', 'PUT', load)
             .then((res) => res.json())
             .then((res) => {
                 if (res.status !== 'OK') {

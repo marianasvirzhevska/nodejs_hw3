@@ -19,10 +19,12 @@ const TruckItem = ({ truck }) => {
     const [error, setError] = useState(false);
     const [editDialog, setEditDialog] = useState(false);
 
-    const assignRequest = (query) => {
-        api.requestWithToken('/trucks', 'PATCH', query)
+    const assignRequest = (id) => {
+        const url = `/api/trucks/${id}/assign`;
+        api.requestWithToken(url, 'PATCH')
             .then((res) => res.json())
             .then((res) => {
+                const query = { _id };
                 dispatch(assignTruck(query));
             })
             .catch((err) => {
@@ -32,8 +34,7 @@ const TruckItem = ({ truck }) => {
     };
 
     const handleAssign = () => {
-        const query = { _id };
-        assignRequest(query);
+        assignRequest(_id);
     };
 
     const deleteTruckRequest = (query) => {

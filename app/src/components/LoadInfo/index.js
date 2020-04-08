@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useRouteMatch } from 'react-router';
-// import { useHistory } from 'react-router-dom';
 
 import * as api from '../../utils/apiRequest';
 import { LOAD_STATE } from '../../constants';
@@ -9,7 +8,6 @@ import AppBar from '../common/AppBar';
 import DeliverySteps from './DeliverySteps';
 
 const LoadInfo = () => {
-    // const history = useHistory();
     const { params } = useRouteMatch();
     const _id = params.id;
 
@@ -27,11 +25,11 @@ const LoadInfo = () => {
 
     async function fetchData() {
         const url = `/trucks/load-info/${_id}`;
-        const res = await api.requestWithToken(url, 'GET');
+        const res = await api.requestWithToken('/api/loads', 'GET');
         res
             .json()
             .then((res) => {
-                setLoad(res.dbLoad);
+                setLoad(res.loads);
                 setLoaded(true);
             })
             .catch((err) => setError(err));
@@ -52,8 +50,8 @@ const LoadInfo = () => {
             }
         }
 
-        const url = `/trucks/load-info/${_id}`;
-        console.log('backPath', query);
+        const url = `/api/loads/${_id}/state`;
+
         api.requestWithToken(url, 'PATCH', query)
             .then((res) => {
                 return res.json();

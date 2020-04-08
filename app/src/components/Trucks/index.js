@@ -23,7 +23,7 @@ const Trucks = () => {
     };
 
     async function fetchData() {
-        const res = await api.requestWithToken('/trucks', 'GET');
+        const res = await api.requestWithToken('/api/trucks', 'GET');
         res
             .json()
             .then((res) => {

@@ -5,7 +5,7 @@ import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined'
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DoneAllOutlinedIcon from '@material-ui/icons/DoneAllOutlined';
 
-import { LOAD_STATUS, LOAD_STATE } from '../../constants';
+import { LOAD_STATUS } from '../../constants';
 import * as api from '../../utils/apiRequest';
 import { deleteLoad, editLoad } from '../../store/actions';
 import EditLoadDialog from './EditLoadDialog';
@@ -17,22 +17,20 @@ const LoadItem = ({ load, setSnackbar, setMessage }) => {
     const [error, setError] = useState(false);
     const [editDialog, setEditDialog] = useState(false);
 
-    const postRequest = (query) => {
-        api.requestWithToken('/loads', 'PATCH', query)
+    const postRequest = (id) => {
+        const url = `/api/loads/${id}/post`;
+        api.requestWithToken(url, 'PATCH')
             .then((res) => res.json())
             .then((res) => {
-                const resQuery = res.updateLoadQuery;
+                const resQuery = res.assigned_to;
                 const postedLoad = {
                     ...resQuery,
+                    _id: id,
                 };
 
-                if (resQuery.status === LOAD_STATUS.NEW) {
-                    postedLoad.state = LOAD_STATE.PENDING;
-                }
-
-                setMessage(res.message);
-                setSnackbar(true);
-                dispatch(editLoad(resQuery));
+                // setMessage(res.message);
+                // setSnackbar(true);
+                dispatch(editLoad(postedLoad));
             })
             .catch((err) => {
                 setError(err);
@@ -41,9 +39,7 @@ const LoadItem = ({ load, setSnackbar, setMessage }) => {
     };
 
     const postLoad = () => {
-        const query = { _id };
-
-        postRequest(query);
+        postRequest(_id);
     };
 
     const deleteLoadRequest = (query) => {

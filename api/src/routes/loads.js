@@ -9,10 +9,17 @@ const {
     updateLoad,
     deleteLoad,
 } = require('../models/loadModel');
-const { LOAD_STATUS, LOAD_STATE } = require('../constants');
+const {
+    updateTruck,
+} = require('../models/truckModel');
+const {
+    updateUser,
+} = require('../models/userModel');
+const { LOAD_STATUS, LOAD_STATE, USER_ROLE, TRUCK_STATUS } = require('../constants');
 const errorHandler = require('../api/errorHandler');
 const findTruck = require('../api/findTruck');
 const validateShipper = require('../api/validateShipper');
+const validateDriver = require('../api/validateDriver');
 
 router.post('/api/loads', (req, res) => {
     const user = req.user;
@@ -43,7 +50,7 @@ router.post('/api/loads', (req, res) => {
             if (err) {
                 errorHandler('Error occurred. Try again later', res, err);
             } else {
-                res.json({ status: 'OK', message: 'Load successfully created.', dbLoad });
+                res.json({ status: 'OK', message: 'Load successfully created.' });
                 res.end();
             }
         });
@@ -52,9 +59,9 @@ router.post('/api/loads', (req, res) => {
 
 router.get('/api/loads', (req, res) => {
     const user = req.user;
-    const isValid = validateShipper(user, res);
 
-    if (isValid) {
+    switch (user.role) {
+    case USER_ROLE.SHIPPER:
         findLoad({ created_by: user.id })
             .then((loads) => {
                 if (!loads.length) {
@@ -66,10 +73,21 @@ router.get('/api/loads', (req, res) => {
                 res.end();
             })
             .catch((err) => errorHandler(err, res));
+        break;
+    case USER_ROLE.DRIVER:
+        findLoadById(user.assigned_load)
+            .then((loads) => {
+                res.json({ status: 'Ok', loads });
+                res.end();
+            })
+            .catch((err) => errorHandler('Load not found', res, err));
+        break;
+    default:
+        errorHandler('Access denied', res);
     }
 });
 
-router.put('/loads', (req, res) => {
+router.put('/api/loads', (req, res) => {
     const isValid = validateShipper(req.user, res);
 
     if (isValid) {
@@ -128,8 +146,8 @@ router.delete('/loads', (req, res) => {
     }
 });
 
-router.patch('/loads', (req, res) => {
-    const { _id } = req.body;
+router.patch('/api/loads/:id/post', (req, res) => {
+    const id = req.params.id;
     const user = req.user;
     const isValid = validateShipper(user, res);
 
@@ -144,13 +162,70 @@ router.patch('/loads', (req, res) => {
     };
 
     if (isValid) {
-        updateLoad(_id, doc, log)
+        updateLoad(id, doc, log)
             .then(() => {
-                findTruck(_id, res);
+                findTruck(id, res);
             })
             .catch((err) => {
                 errorHandler('Error. Try again later.', res, err);
             });
+    }
+});
+
+router.patch('/api/loads/:id/state', (req, res) => {
+    const loadId = req.params.id;
+    const { state } = req.body;
+    const user = req.user;
+    const isValid = validateDriver(user, res);
+
+    const errors = {};
+
+    if (state === LOAD_STATE.ARRIVED_TO_DELIVERY) {
+        const log = {
+            message: 'Load delivered.',
+            time: Date.now(),
+        };
+
+        const updateLoadQuery = {
+            state,
+            status: LOAD_STATUS.SHIPPED,
+        };
+
+        const updateDriverQuery = {
+            assigned_load: null,
+        };
+
+        const updateTruckQuery = {
+            status: TRUCK_STATUS.IN_SERVICE,
+        };
+
+        Promise.all([
+            updateTruck(user.assigned_truck, updateTruckQuery)
+                .catch((err) => errors.truck = err),
+            updateUser(user.id, updateDriverQuery)
+                .catch((err) => errors.user = err),
+            updateLoad(loadId, updateLoadQuery, log)
+                .catch((err) => errors.load = err),
+        ])
+            .then(() => {
+                res.json({ status: 'Ok', loadStatus: 'Load arrived to delivery.' });
+            })
+            .catch(() => res.json(errors));
+    } else {
+        const updateLoadQuery = { state };
+        const log = {
+            message: `Load state updated to: ${state}`,
+            time: Date.now(),
+        };
+
+        if (isValid) {
+            updateLoad(loadId, updateLoadQuery, log)
+                .then(() => {
+                    res.json({ status: `Load state updated to: ${state}` });
+                    res.end();
+                })
+                .catch((err) => errorHandler('Load not found', res, err));
+        }
     }
 });
 
