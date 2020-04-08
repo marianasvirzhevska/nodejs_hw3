@@ -11,8 +11,13 @@ const {
 } = require('../models/userModel');
 const errorHandler = require('../api/errorHandler');
 
-router.post('/register', (req, res) => {
-    const user = req.body;
+router.post('/api/auth/register', (req, res) => {
+    const reqUser = req.body;
+    const user = {
+        email: reqUser.username,
+        password: reqUser.password,
+        role: reqUser.role,
+    };
 
     const { value, error } = userValidateSchema.validate(user);
 
@@ -32,7 +37,7 @@ router.post('/register', (req, res) => {
                 errorHandler('Email address already in use', res, null, 403);
                 return;
             }
-
+            console.log('dbUser : ', user);
             bcrypt.hash(password, 10, (err, hash) => {
                 dbUser.password = hash;
 
@@ -50,11 +55,13 @@ router.post('/register', (req, res) => {
                             lastName: dbUser.lastName,
                             role: dbUser.role,
                             id: dbUser._id,
+                            assigned_load: dbUser.assigned_load,
+                            assigned_truck: dbUser.assigned_truck,
                         };
 
                         const userToken = jwt.sign(user, secret);
 
-                        res.json({ status: 'User successfully created', user: userToken });
+                        res.json({ status: 'User successfully created', token: userToken });
                     }
                     res.end();
                 });

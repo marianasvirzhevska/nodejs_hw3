@@ -9,7 +9,6 @@ import { LOAD_STATUS, LOAD_STATE } from '../../constants';
 import * as api from '../../utils/apiRequest';
 import { deleteLoad, editLoad } from '../../store/actions';
 import EditLoadDialog from './EditLoadDialog';
-import Snackbar from '../common/SnackBar';
 
 const LoadItem = ({ load, setSnackbar, setMessage }) => {
     const dispatch = useDispatch();
