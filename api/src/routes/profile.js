@@ -9,7 +9,7 @@ const {
 const errorHandler = require('../api/errorHandler');
 const validateShipper = require('../api/validateShipper');
 
-router.get('/profile', (req, res) => {
+router.get('/api/profile', (req, res) => {
     const user = req.user;
 
     if (!req.user) {
@@ -38,7 +38,7 @@ router.get('/profile', (req, res) => {
     }
 });
 
-router.put('/profile', (req, res) => {
+router.put('/api/profile', (req, res) => {
     const user = req.user;
 
     if (!req.user) {
@@ -64,7 +64,7 @@ router.put('/profile', (req, res) => {
     }
 });
 
-router.delete('/profile', (req, res) =>{
+router.delete('/api/profile', (req, res) =>{
     const user = req.user;
     const isValid = validateShipper(user);
 

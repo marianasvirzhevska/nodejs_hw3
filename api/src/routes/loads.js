@@ -14,6 +14,7 @@ const {
 } = require('../models/truckModel');
 const {
     updateUser,
+    findUserById,
 } = require('../models/userModel');
 const { LOAD_STATUS, LOAD_STATE, USER_ROLE, TRUCK_STATUS } = require('../constants');
 const errorHandler = require('../api/errorHandler');
@@ -75,12 +76,17 @@ router.get('/api/loads', (req, res) => {
             .catch((err) => errorHandler(err, res));
         break;
     case USER_ROLE.DRIVER:
-        findLoadById(user.assigned_load)
-            .then((loads) => {
-                res.json({ status: 'Ok', loads });
-                res.end();
-            })
-            .catch((err) => errorHandler('Load not found', res, err));
+        findUserById(user.id)
+            .then((user) => {
+                if (user) {
+                    findLoadById(user.assigned_load)
+                        .then((loads) => {
+                            res.json({ status: 'Ok', loads });
+                            res.end();
+                        })
+                        .catch((err) => errorHandler('Load not found', res, err));
+                }
+            });
         break;
     default:
         errorHandler('Access denied', res);
@@ -123,7 +129,7 @@ router.put('/api/loads', (req, res) => {
     }
 });
 
-router.delete('/loads', (req, res) => {
+router.delete('/api/loads', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
     const isValid = validateShipper(user, res);
@@ -208,7 +214,7 @@ router.patch('/api/loads/:id/state', (req, res) => {
                 .catch((err) => errors.load = err),
         ])
             .then(() => {
-                res.json({ status: 'Ok', loadStatus: 'Load arrived to delivery.' });
+                res.json({ status: 'Load arrived to delivery.' });
             })
             .catch(() => res.json(errors));
     } else {

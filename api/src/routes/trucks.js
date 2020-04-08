@@ -128,7 +128,7 @@ router.patch('/api/trucks/:id/assign', (req, res) => {
     }
 });
 
-router.delete('/trucks', (req, res) => {
+router.delete('/api/trucks', (req, res) => {
     const { _id } = req.body;
     const user = req.user;
     const isValid = validateDriver(user, res);

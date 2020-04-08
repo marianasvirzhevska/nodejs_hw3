@@ -43,7 +43,7 @@ const LoadItem = ({ load, setSnackbar, setMessage }) => {
     };
 
     const deleteLoadRequest = (query) => {
-        api.requestWithToken('/loads', 'DELETE', query)
+        api.requestWithToken('/api/loads', 'DELETE', query)
             .then((res) => res.json())
             .then((res) => {
                 dispatch(deleteLoad(query));

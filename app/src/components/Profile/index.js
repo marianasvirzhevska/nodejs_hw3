@@ -25,7 +25,7 @@ const Profile = () => {
     const [deleteDialog, setDeleteDialog] = useState(false);
 
     async function fetchData() {
-        const res = await api.requestWithToken('/profile', 'GET');
+        const res = await api.requestWithToken('/api/profile', 'GET');
         res
             .json()
             .then((res) => {
@@ -49,7 +49,7 @@ const Profile = () => {
     };
 
     const deleteRequest = () => {
-        api.requestWithToken('/profile', 'DELETE', { _id: user._id })
+        api.requestWithToken('/api/profile', 'DELETE', { _id: user._id })
             .then((res) => res.json())
             .then((res) => {
                 dispatch({ type: LOGOUT });

@@ -38,7 +38,7 @@ const TruckItem = ({ truck }) => {
     };
 
     const deleteTruckRequest = (query) => {
-        api.requestWithToken('/trucks', 'DELETE', query)
+        api.requestWithToken('/api/trucks', 'DELETE', query)
             .then((res) => res.json())
             .then((res) => {
                 dispatch(deleteTruck(query));
