@@ -29,7 +29,7 @@ const Loads = () => {
     };
 
     async function fetchData() {
-        const res = await api.requestWithToken('/loads', 'GET');
+        const res = await api.requestWithToken('/api/loads', 'GET');
         res
             .json()
             .then((res) => {

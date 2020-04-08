@@ -37,7 +37,7 @@ router.post('/api/auth/register', (req, res) => {
                 errorHandler('Email address already in use', res, null, 403);
                 return;
             }
-            console.log('dbUser : ', user);
+
             bcrypt.hash(password, 10, (err, hash) => {
                 dbUser.password = hash;
 
@@ -61,7 +61,7 @@ router.post('/api/auth/register', (req, res) => {
 
                         const userToken = jwt.sign(user, secret);
 
-                        res.json({ status: 'User successfully created', token: userToken });
+                        res.json({ status: 'User registered successfully.', token: userToken });
                     }
                     res.end();
                 });

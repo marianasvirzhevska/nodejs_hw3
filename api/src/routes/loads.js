@@ -14,16 +14,15 @@ const errorHandler = require('../api/errorHandler');
 const findTruck = require('../api/findTruck');
 const validateShipper = require('../api/validateShipper');
 
-router.post('/loads', (req, res) => {
+router.post('/api/loads', (req, res) => {
     const user = req.user;
     const isValid = validateShipper(user, res);
 
     if (isValid) {
         const { id } = user;
-        const { name, dimensions, payload } = req.body;
+        const { dimensions, payload } = req.body;
 
         const load = {
-            name,
             created_by: id,
             dimensions,
             payload,
@@ -44,14 +43,14 @@ router.post('/loads', (req, res) => {
             if (err) {
                 errorHandler('Error occurred. Try again later', res, err);
             } else {
-                res.json({ status: 'OK', message: 'Load successfully created', dbLoad });
+                res.json({ status: 'OK', message: 'Load successfully created.', dbLoad });
                 res.end();
             }
         });
     }
 });
 
-router.get('/loads', (req, res) => {
+router.get('/api/loads', (req, res) => {
     const user = req.user;
     const isValid = validateShipper(user, res);
 

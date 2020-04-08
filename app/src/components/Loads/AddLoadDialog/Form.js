@@ -16,7 +16,7 @@ let Form = ({ invalid, submitting, handleClose }) => {
     const formValues = useSelector((state) => getFormValues('addLoad')(state));
 
     const createRequest = (load) => {
-        api.requestWithToken('/loads', 'POST', load)
+        api.requestWithToken('/api/loads', 'POST', load)
             .then((res) => {
                 if (res.status !== 200) {
                     setError(true);
@@ -117,9 +117,6 @@ function validate(_values) {
     const values = trim(_values);
     const errors = {};
 
-    if (!values.name) {
-        errors.name='Load Name field cannot be blank';
-    }
     if (!values.width) {
         errors.width='Width form field cannot be blank';
     } else if (values.width > 700) {
