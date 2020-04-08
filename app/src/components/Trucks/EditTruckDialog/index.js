@@ -3,14 +3,11 @@ import PropTypes from 'prop-types';
 import { AppDialog, AppDialogTitle, AppDialogContent } from '../../common/Dialog';
 import Form from './Form';
 
-const AddLoadDialog = (props) => {
-    const { open, handleClose, load, setMessage, setSnackbar } = props;
+const AddTruckDialog = (props) => {
+    const { open, handleClose, truck } = props;
     const initialValues = {
-        name: load && load.name,
-        payload: load && load.payload,
-        width: load && load.dimensions.width,
-        height: load && load.dimensions.height,
-        length: load && load.dimensions.length,
+        name: truck && truck.name,
+        type: truck && truck.type,
     };
 
     return (
@@ -23,21 +20,19 @@ const AddLoadDialog = (props) => {
                 title='Create Load'/>
             <AppDialogContent>
                 <Form
-                    load={load}
+                    truck={truck}
                     initialValues={initialValues}
                     handleClose={handleClose}
-                    setMessage={setMessage}
-                    setSnackbar={setSnackbar}
                 />
             </AppDialogContent>
         </AppDialog>
     );
 };
 
-AddLoadDialog.propTypes = {
+AddTruckDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
 };
 
-export default AddLoadDialog;
+export default AddTruckDialog;
 

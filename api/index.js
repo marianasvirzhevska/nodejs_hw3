@@ -6,7 +6,7 @@ const registerRoute = require('./src/routes/register');
 const loginRoute = require('./src/routes/login');
 const profileRoute = require('./src/routes/profile');
 const changePassRoute = require('./src/routes/changePassword');
-const truckRoute = require('./src/routes/truck');
+const trucksRoute = require('./src/routes/trucks');
 const loadsRoute = require('./src/routes/loads');
 
 const { port: serverPort } = config.get('serverConfig');
@@ -39,7 +39,7 @@ app.use(auth);
 app.use(profileRoute);
 app.use(changePassRoute);
 
-app.use(truckRoute);
+app.use(trucksRoute);
 
 app.use(loadsRoute);
 

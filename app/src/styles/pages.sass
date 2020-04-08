@@ -49,6 +49,12 @@
     @include flex
     align-items: center
     justify-content: space-between 
+    .delete-button
+        color: #fff
+        background: #ff7272
+        margin-right: 16px
+        &:hover
+            background: #d75d5d
 
 .subtitle
     color: $titleFont
@@ -115,6 +121,7 @@
 
 .item-info
     padding: 0 14px
+    margin: 14px 0
 
 .light
     color: $green
@@ -126,6 +133,71 @@
     position: absolute
     right: 0
     top: 0
+
+.assigned-truck
+    color: #f69c01
+    padding: 0 8px
+
+.load-info
+    padding: 2em 0
+    &--row
+        @include flex
+        align-items: center
+        margin: 16px 0
+    &--name 
+        flex: 0 0.8 80%
+        font-size: $titleFont
+        font-weight: 500
+    &--label
+        flex: 0 0.2 20%
+        font-size: $middleFont
+        color: $secondGreyFont
+    &--state
+        flex: 0 0.8 80%
+        font-size: $middleFont
+        color: $blueBg
+
+.load-dimensions
+     margin: 16px 0
+    
+.load-label
+    font-size: $middleFont
+    color: $secondGreyFont
+    padding: 6px 0
+    b 
+        color: $black
+        padding: 0 10px
+
+
+.steps
+    margin: 2em 0
+    &--row
+        @include flex
+        justify-content: space-between
+        position: relative
+        &::before
+            content: " "
+            display: block
+            position: absolute
+            width: 100%
+            height: 1px
+            top: 20px
+            background: $borderColor
+            
+    &--item
+        flex: 0 0.25 25%
+        @include flex
+        flex-direction: column
+        align-items: center
+    &--label
+        margin: 16px 0
+        color: $secondGreyFont
+
+.message
+    color: $blueBg
+    font-weight: 500
+
+
 
 
 

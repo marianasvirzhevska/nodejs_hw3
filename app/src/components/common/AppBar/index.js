@@ -8,7 +8,7 @@ import styles from './AppBar.module.sass';
 import { LOGOUT } from '../../../store/constants';
 
 const AppBar = ( props ) => {
-    const { title } = props;
+    const { title, backPath } = props;
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -18,11 +18,27 @@ const AppBar = ( props ) => {
         history.push('/');
     };
 
+    const handleBack = () => {
+        history.push(backPath);
+    };
+
     return (
         <div className={styles.appBar}>
             <div className="container">
                 <div className="container-fluid">
                     <div className={styles.appContainer}>
+                        {
+                            backPath ?
+                                <div className={styles.backBtn}>
+                                    <Button
+                                        variant="text"
+                                        size="small"
+                                        color="primary"
+                                        onClick={handleBack}
+                                    >Back</Button>
+                                </div> :
+                                null
+                        }
                         <h1 className={styles.title}>
                             {title}
                         </h1>
@@ -43,6 +59,7 @@ const AppBar = ( props ) => {
 
 AppBar.propTypes = {
     title: PropTypes.string,
+    backPath: PropTypes.string,
 };
 
 

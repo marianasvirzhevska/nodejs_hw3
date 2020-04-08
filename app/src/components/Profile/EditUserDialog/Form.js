@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import { Field, reduxForm, getFormValues } from 'redux-form';
 import { connect, useSelector, useDispatch } from 'react-redux';
@@ -16,7 +16,7 @@ let Form = ({ invalid, submitting, handleClose, user }) => {
     const formValues = useSelector((state) => getFormValues('editUser')(state));
 
     const editRequest = (user) => {
-        api.request('/profile', 'PUT', user)
+        api.requestWithToken('/profile', 'PUT', user)
             .then((res) => {
                 if (res.status !== 200) {
                     setError(true);
@@ -41,10 +41,13 @@ let Form = ({ invalid, submitting, handleClose, user }) => {
 
     const handleCreate = (e) => {
         e.preventDefault();
-        const _user = { ...user, ...formValues };
+        const _user = {
+            firstName: formValues.firstName,
+            lastName: formValues.lastName,
+            phone: formValues.phone,
+        };
 
         editRequest(_user);
-        // handleClose();
     };
 
     return (

@@ -7,19 +7,25 @@ import { getServerLoads } from '../../store/actions';
 import AppBar from '../common/AppBar';
 import LoadItem from './LoadItem';
 import AddLoadDialog from './AddLoadDialog';
+import Snackbar from '../common/SnackBar';
 
 const Loads = () => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.user.userInfo);
     const storeLoads = useSelector((state) => state.loads);
 
     const [createDialog, setCreateDialog] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(null);
+    const [message, setMessage] = useState(false);
+    const [snackbar, setSnackbar] = useState(false);
     const [loads, setLoads] = useState([]);
 
     const handleCreate = () => {
         setCreateDialog(!createDialog);
+    };
+
+    const showSnackbar = () => {
+        setSnackbar(!snackbar);
     };
 
     async function fetchData() {
@@ -27,7 +33,9 @@ const Loads = () => {
         res
             .json()
             .then((res) => {
-                dispatch(getServerLoads(res.loads));
+                if (res.loads) {
+                    dispatch(getServerLoads(res.loads));
+                }
                 setLoaded(true);
             })
             .catch((err) => setError(err));
@@ -46,8 +54,8 @@ const Loads = () => {
     return (
         <div className="root">
             <AppBar
-                title={loaded ? user.role : 'Profile'}
-            />
+                backPath="profile"
+                title="SHIPPER"/>
             <div className="container">
                 <div className="container-fluid">
                     <div className="paper">
@@ -62,10 +70,15 @@ const Loads = () => {
                         </div>
                         <ul className="list">
                             {
-                                loaded && loads ?
+                                loaded && loads.length ?
                                     loads.map((item, i) => {
                                         return (
-                                            <LoadItem key={i} load={item}/>
+                                            <LoadItem
+                                                key={i}
+                                                load={item}
+                                                setMessage={setMessage}
+                                                setSnackbar={setSnackbar}
+                                            />
                                         );
                                     }) :
                                     <li>Loads not found.</li>
@@ -75,6 +88,10 @@ const Loads = () => {
                     </div>
                 </div>
             </div>
+            <Snackbar
+                open={snackbar}
+                setOpen={showSnackbar}
+                message={message}/>
             <AddLoadDialog
                 open={createDialog}
                 handleClose={handleCreate}

@@ -24,6 +24,7 @@ router.post('/register', (req, res) => {
 
     const dbUser = new UserModel(value);
     const { email, password } = dbUser;
+    dbUser.password_repeat = undefined;
 
     findUser({ email })
         .then((user) => {

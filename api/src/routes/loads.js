@@ -44,7 +44,7 @@ router.post('/loads', (req, res) => {
             if (err) {
                 errorHandler('Error occurred. Try again later', res, err);
             } else {
-                res.json({ status: 'Load successfully created', dbLoad });
+                res.json({ status: 'OK', message: 'Load successfully created', dbLoad });
                 res.end();
             }
         });
@@ -63,7 +63,7 @@ router.get('/loads', (req, res) => {
                     return;
                 };
 
-                res.json({ status: 'Ok', loads });
+                res.json({ status: 'OK', loads });
                 res.end();
             })
             .catch((err) => errorHandler(err, res));
@@ -94,7 +94,7 @@ router.put('/loads', (req, res) => {
                 } else {
                     updateLoad(load._id, value, log)
                         .then(() => {
-                            res.json({ status: 'Load edited.' });
+                            res.json({ status: 'OK', message: 'Load edited.' });
                             res.end();
                         })
                         .catch((err) => {
@@ -114,15 +114,15 @@ router.delete('/loads', (req, res) => {
     if (isValid) {
         findLoadById(_id)
             .then((dbLoad) => {
-                if (dbLoad.status !== LOAD_STATUS.NEW) {
-                    errorHandler('Deleting forbiden.', res, null, 403);
-                } else {
+                if (dbLoad.status === LOAD_STATUS.NEW || dbLoad.status === LOAD_STATUS.SHIPPED) {
                     deleteLoad(_id)
                         .then(() => {
-                            res.json({ status: 'Load deleted.' });
+                            res.json({ status: 'OK', message: 'Load deleted.' });
                             res.end();
                         })
                         .catch((err) => errorHandler(err, res));
+                } else {
+                    errorHandler('Deleting forbidden.', res, null, 403);
                 }
             })
             .catch((err) => errorHandler('Load not found.', res, err));

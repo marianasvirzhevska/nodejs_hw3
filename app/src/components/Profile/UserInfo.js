@@ -15,7 +15,7 @@ const UserInfo = ({ user }) => {
         <div className="info">
             <div className="info--row">
                 <div className="info--label">User name:</div>
-                <div className="info--description">{user.firstName} {user.firstName}</div>
+                <div className="info--description">{user.firstName} {user.lastName}</div>
             </div>
             <div className="info--row">
                 <div className="info--label">User role:</div>
@@ -37,7 +37,7 @@ const UserInfo = ({ user }) => {
                             {
                                 user.assigned_load ?
                                     <Link to={`trucks/load-info/${user.assigned_load}`}>View</Link> :
-                                    'No assigned load.'
+                                    'Load not assigned.'
                             }
                         </div>
                     </div> :
@@ -47,7 +47,7 @@ const UserInfo = ({ user }) => {
                 user.role === USER_ROLE.DRIVER ?
                     <div className="info--row">
                         <div className="info--label">Driver Trucks:</div>
-                        <div className="info--description"><Link to="/truck">Go to Trucks</Link></div>
+                        <div className="info--description"><Link to="/trucks">Go to Trucks</Link></div>
                     </div> :
                     <div className="info--row">
                         <div className="info--label">Shipper Loads:</div>
