@@ -52,7 +52,7 @@ function findTruck(loadId, res) {
 
                         updateLoad(dbLoad._id, updateLoadQuery, log)
                             .then(() => {
-                                res.json({ status: 'Load assigned.', updateLoadQuery });
+                                res.json({ status: 'OK', message: 'Load assigned.', updateLoadQuery });
                                 res.end();
                             })
                             .catch((err) => errorHandler('Can\'t assign driver', res, err));
@@ -80,7 +80,7 @@ function findTruck(loadId, res) {
 
                         updateLoad(dbLoad._id, updateLoadQuery, log)
                             .then(() => {
-                                res.json({ status: 'Truck not found. Try again latter.', updateLoadQuery });
+                                res.json({ status: 'OK', message: 'Truck not found. Try again latter.', updateLoadQuery });
                                 res.end();
                             })
                             .catch((err) => errorHandler('Server error.', res, err));

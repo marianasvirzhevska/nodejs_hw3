@@ -8,27 +8,21 @@ import trim from '../../../utils/trim';
 import { editLoad } from '../../../store/actions';
 import * as api from '../../../utils/apiRequest';
 
-let Form = ({ invalid, submitting, handleClose, load }) => {
+let Form = ({ invalid, submitting, handleClose, load, setMessage, setSnackbar }) => {
     const dispatch = useDispatch();
     const [error, setError] = useState(null);
-    const [message, setMessage] = useState(null);
 
     const formValues = useSelector((state) => getFormValues('editLoad')(state));
 
     const createRequest = (load) => {
         api.requestWithToken('/loads', 'PUT', load)
+            .then((res) => res.json())
             .then((res) => {
-                if (res.status !== 200) {
-                    setError(true);
+                if (res.status !== 'OK') {
+                    setError('Error. Load can not be edited.');
                 } else {
-                    setError(false);
-                }
-                return res.json();
-            })
-            .then((res) => {
-                if (error) {
-                    setMessage(res.status);
-                } else {
+                    setMessage(res.message);
+                    setSnackbar(true);
                     dispatch(editLoad(load));
                     handleClose();
                 }
@@ -101,7 +95,7 @@ let Form = ({ invalid, submitting, handleClose, load }) => {
                     />
                 </div>
             </div>
-            {error ? <p className="error">{message}</p> : null}
+            {error ? <p className="error">{error}</p> : null}
             <div className="dialog-action">
                 <Button
                     color="secondary"

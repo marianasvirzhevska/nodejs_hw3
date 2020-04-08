@@ -7,6 +7,7 @@ import { getServerLoads } from '../../store/actions';
 import AppBar from '../common/AppBar';
 import LoadItem from './LoadItem';
 import AddLoadDialog from './AddLoadDialog';
+import Snackbar from '../common/SnackBar';
 
 const Loads = () => {
     const dispatch = useDispatch();
@@ -15,10 +16,16 @@ const Loads = () => {
     const [createDialog, setCreateDialog] = useState(false);
     const [loaded, setLoaded] = useState(false);
     const [error, setError] = useState(null);
+    const [message, setMessage] = useState(false);
+    const [snackbar, setSnackbar] = useState(false);
     const [loads, setLoads] = useState([]);
 
     const handleCreate = () => {
         setCreateDialog(!createDialog);
+    };
+
+    const showSnackbar = () => {
+        setSnackbar(!snackbar);
     };
 
     async function fetchData() {
@@ -66,7 +73,12 @@ const Loads = () => {
                                 loaded && loads.length ?
                                     loads.map((item, i) => {
                                         return (
-                                            <LoadItem key={i} load={item}/>
+                                            <LoadItem
+                                                key={i}
+                                                load={item}
+                                                setMessage={setMessage}
+                                                setSnackbar={setSnackbar}
+                                            />
                                         );
                                     }) :
                                     <li>Loads not found.</li>
@@ -76,6 +88,10 @@ const Loads = () => {
                     </div>
                 </div>
             </div>
+            <Snackbar
+                open={snackbar}
+                setOpen={showSnackbar}
+                message={message}/>
             <AddLoadDialog
                 open={createDialog}
                 handleClose={handleCreate}

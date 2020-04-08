@@ -4,7 +4,7 @@ import { AppDialog, AppDialogTitle, AppDialogContent } from '../../common/Dialog
 import Form from './Form';
 
 const AddLoadDialog = (props) => {
-    const { open, handleClose, load } = props;
+    const { open, handleClose, load, setMessage, setSnackbar } = props;
     const initialValues = {
         name: load && load.name,
         payload: load && load.payload,
@@ -26,6 +26,8 @@ const AddLoadDialog = (props) => {
                     load={load}
                     initialValues={initialValues}
                     handleClose={handleClose}
+                    setMessage={setMessage}
+                    setSnackbar={setSnackbar}
                 />
             </AppDialogContent>
         </AppDialog>

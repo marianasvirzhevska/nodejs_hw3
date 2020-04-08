@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import * as api from '../../utils/apiRequest';
 import { getUserInfo } from '../../store/actions';
 import { LOGOUT } from '../../store/constants';
-import { LOAD_STATE, USER_ROLE } from '../../constants';
+import { USER_ROLE } from '../../constants';
 
 import AppBar from '../common/AppBar';
 import UserInfo from './UserInfo';
