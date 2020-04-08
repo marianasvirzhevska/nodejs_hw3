@@ -25,7 +25,7 @@ export const LOAD_STATE = {
 };
 
 export const USER_ROLE = {
-    SHIPPER: 'SHIPPER',
-    DRIVER: 'DRIVER',
+    SHIPPER: 'shipper',
+    DRIVER: 'driver',
 };
 

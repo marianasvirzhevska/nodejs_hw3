@@ -3,10 +3,19 @@ const Joi = require('@hapi/joi');
 const ObjectID = require('mongodb').ObjectID;
 
 const userSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
+    firstName: {
+        type: String,
+        default: null,
+    },
+    lastName: {
+        type: String,
+        default: null,
+    },
     email: String,
-    phone: String,
+    phone: {
+        type: String,
+        default: null,
+    },
     birthday: Date,
     created: {
         type: Date,
@@ -40,10 +49,10 @@ const assignedLoad = Joi.string();
 const assignedTruck = Joi.string();
 
 const userValidateSchema = Joi.object({
-    firstName: firstName.required(),
-    lastName: lastName.required(),
+    firstName: firstName,
+    lastName: lastName,
     email: email.required(),
-    phone: phone.required(),
+    phone: phone,
     created: created,
     role: role.required(),
     password: password.required(),

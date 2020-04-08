@@ -7,8 +7,8 @@ const secret = config.get('secret');
 const { findUser } = require('../models/userModel');
 const errorHandler = require('../api/errorHandler');
 
-router.post('/login', (req, res) => {
-    const { email, password } = req.body;
+router.post('/api/auth/login', (req, res) => {
+    const { username: email, password } = req.body;
 
     findUser({ email })
         .then(([ user ]) => {
@@ -26,11 +26,12 @@ router.post('/login', (req, res) => {
                             role: user.role,
                             id: user._id,
                             assigned_load: user.assigned_load,
+                            assigned_truck: user.assigned_truck,
                         };
 
                         const userToken = jwt.sign(authUser, secret);
 
-                        res.json({ status: 'User successfully logged in.', user: userToken });
+                        res.json({ status: 'User authenticated successfully.', token: userToken });
                         res.end();
                     } else {
                         errorHandler('Wrong password.', res, null, 403);
