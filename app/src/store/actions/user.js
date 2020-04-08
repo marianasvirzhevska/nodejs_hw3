@@ -1,10 +1,19 @@
 import {
     EDIT_USER,
+    GET_USER_INFO,
 } from '../constants';
 
-export const editUser = (user) => {
+export const editUser = (userInfo) => {
     return {
         type: EDIT_USER,
-        payload: user,
+        payload: userInfo,
+    };
+};
+
+
+export const getUserInfo = (userInfo) => {
+    return {
+        type: GET_USER_INFO,
+        payload: userInfo,
     };
 };

@@ -11,6 +11,7 @@ import PublicRoute from './components/PublicRoute';
 import Login from './components/Login';
 import Register from './components/Register';
 import Profile from './components/Profile';
+import Loads from './components/Loads';
 import NotFound from './components/NotFound';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
                 <PublicRoute restricted={true} component={Login} path="/" exact />
                 <PublicRoute restricted={true} component={Register} path="/register" exact />
                 <PrivateRoute component={Profile} path="/profile" exact />
+                <PrivateRoute component={Loads} path="/loads" exact />
                 <Route path="*" component={NotFound}/>
             </Switch>
         </Router>

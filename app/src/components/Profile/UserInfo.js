@@ -43,6 +43,17 @@ const UserInfo = ({ user }) => {
                     </div> :
                     null
             }
+            {
+                user.role === USER_ROLE.DRIVER ?
+                    <div className="info--row">
+                        <div className="info--label">Driver Trucks:</div>
+                        <div className="info--description"><Link to="/truck">Go to Trucks</Link></div>
+                    </div> :
+                    <div className="info--row">
+                        <div className="info--label">Shipper Loads:</div>
+                        <div className="info--description"><Link to="/loads">Go to Loads</Link></div>
+                    </div>
+            }
             <div className="info--row info--center">
                 {
                     newPasForm && !user.assigned_load ?

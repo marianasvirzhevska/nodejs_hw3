@@ -7,7 +7,7 @@ import { Field, reduxForm, getFormValues } from 'redux-form';
 import setUser from '../../utils/setUser';
 import * as api from '../../utils/apiRequest';
 import trim from '../../utils/trim';
-import { registerUser } from '../../store/actions';
+import { login } from '../../store/actions';
 import { USER_ROLE } from '../../constants';
 
 import Input from '../common/Input';
@@ -28,7 +28,7 @@ let RegisterForm = (props) => {
                     setError(res.status);
                 } else {
                     setUser(res.user);
-                    dispatch(registerUser(res.user));
+                    dispatch(login());
 
                     history.push('/profile');
                 }
